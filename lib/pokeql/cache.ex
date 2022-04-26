@@ -1,24 +1,19 @@
 defmodule Pokeql.Cache do
-  @pokeapi_url "https://pokeapi.co/api/v2"
+  alias Pokeql.CacheQueue
+  alias Pokeql.PokeAPI
+
   def create do
-    with {:ok, %{body: body}} <- HTTPoison.get("#{@pokeapi_url}/pokemon?limit=2000"),
-         {:ok, %{"results" => pokemons}} <- Jason.decode(body) do
-      create_cache(pokemons)
+    :ets.new(:pokemons, [:named_table, :set, :public])
+
+    with {:ok, pokemons} <- PokeAPI.get_pokemons() do
+      Enum.map(pokemons, &GenServer.cast(CacheQueue, {:insert_pokemon, &1}))
     end
   end
 
-  defp insert_pokemon(pokemon) do
-    with {:ok, %{body: body}} <- HTTPoison.get(pokemon["url"]),
-         {:ok, pokemon_details} <- Jason.decode(body) do
-      IO.puts("insert new pokemon => #{pokemon_details["id"]} - #{pokemon_details["name"]}\n")
+  def insert_pokemon(pokemon) do
+    with {:ok, pokemon_details} <- PokeAPI.get_pokemon(pokemon) do
       :ets.insert_new(:pokemons, {pokemon_details["id"], pokemon_details})
     end
-  end
-
-  defp create_cache(pokemons) do
-    :ets.new(:pokemons, [:named_table, :set, :protected])
-
-    Enum.map(pokemons, fn pokemon -> insert_pokemon(pokemon) end)
   end
 
   def get_all do

@@ -5,6 +5,8 @@ defmodule Pokeql.Application do
 
   use Application
 
+  alias Pokeql.CacheQueue
+
   def start(_type, _args) do
     children = [
       # Start the Ecto repository
@@ -14,7 +16,8 @@ defmodule Pokeql.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Pokeql.PubSub},
       # Start the Endpoint (http/https)
-      PokeqlWeb.Endpoint
+      PokeqlWeb.Endpoint,
+      CacheQueue,
       # Start a worker by calling: Pokeql.Worker.start_link(arg)
       # {Pokeql.Worker, arg}
     ]
