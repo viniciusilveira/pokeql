@@ -17,7 +17,7 @@ defmodule Pokeql.Application do
       {Phoenix.PubSub, name: Pokeql.PubSub},
       # Start the Endpoint (http/https)
       PokeqlWeb.Endpoint,
-      CacheQueue,
+      CacheQueue
       # Start a worker by calling: Pokeql.Worker.start_link(arg)
       # {Pokeql.Worker, arg}
     ]

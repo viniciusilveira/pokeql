@@ -6,7 +6,7 @@ defmodule Pokeql.Cache do
     :ets.new(:pokemons, [:named_table, :set, :public])
 
     with {:ok, pokemons} <- PokeAPI.get_pokemons() do
-      Enum.map(pokemons, &GenServer.cast(CacheQueue, {:insert_pokemon, &1}))
+      {:ok, Enum.map(pokemons, &GenServer.cast(CacheQueue, {:insert_pokemon, &1}))}
     end
   end
 
