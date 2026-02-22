@@ -58,6 +58,7 @@ defmodule Pokeql.MixProject do
       {:dialyxir, "~> 1.4", only: :dev, runtime: false},
       {:hackney, "~> 1.20"},
       {:ex_machina, "~> 2.7.0", only: :test},
+      {:faker, "~> 0.18", only: :test},
       {:httpoison, "~> 2.2"}
     ]
   end

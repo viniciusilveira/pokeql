@@ -10,7 +10,11 @@ config :pokeql, Pokeql.Repo,
   password: "postgres",
   database: "pokeql_test#{System.get_env("MIX_TEST_PARTITION")}",
   hostname: "localhost",
-  pool: Ecto.Adapters.SQL.Sandbox
+  port: 5432,
+  pool: Ecto.Adapters.SQL.Sandbox,
+  pool_size: 1,
+  queue_target: 5000,
+  queue_interval: 1000
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
