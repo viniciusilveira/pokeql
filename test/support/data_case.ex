@@ -24,6 +24,7 @@ defmodule Pokeql.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import Pokeql.DataCase
+      import Pokeql.Factory
     end
   end
 
