@@ -28,22 +28,48 @@ Pokeql is a backend Elixir/Phoenix application that provides a fast API for acce
 
 ### Prerequisites
 - Elixir & Erlang installed ([Install guide](https://elixir-lang.org/install.html))
-- PostgreSQL running (for Ecto repo)
+- PostgreSQL running (see Docker setup below) or locally installed
 
 ### Setup
+
+#### Option 1: Using Docker for PostgreSQL (Recommended)
+1. **Start PostgreSQL with Docker:**
+   ```sh
+   docker-compose up -d postgres
+   ```
+2. **Install dependencies:**
+   ```sh
+   mix deps.get
+   ```
+3. **Create and migrate your database:**
+   ```sh
+   mix ecto.setup
+   ```
+4. **Start the Phoenix server:**
+   ```sh
+   mix phx.server
+   ```
+
+#### Option 2: Traditional Setup
 1. **Install dependencies:**
-  ```sh
-  mix deps.get
-  ```
+   ```sh
+   mix deps.get
+   ```
 2. **Create and migrate your database:**
-  ```sh
-  mix ecto.setup
-  ```
+   ```sh
+   mix ecto.setup
+   ```
 3. **Start the Phoenix server:**
-  ```sh
-  mix phx.server
-  ```
+   ```sh
+   mix phx.server
+   ```
 4. Visit [`localhost:4000`](http://localhost:4000) in your browser.
+
+### Docker Commands
+- **Start PostgreSQL:** `docker-compose up -d postgres`
+- **Stop PostgreSQL:** `docker-compose down`
+- **View PostgreSQL logs:** `docker-compose logs postgres`
+- **Reset PostgreSQL data:** `docker-compose down -v` (removes data volume)
 
 ---
 
