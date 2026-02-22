@@ -42,23 +42,23 @@ defmodule Pokeql.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.5.12"},
+      {:phoenix, "~> 1.6.16"},
       {:phoenix_ecto, "~> 4.4"},
-      {:ecto_sql, "~> 3.4"},
+      {:ecto_sql, "~> 3.10"},
       {:postgrex, ">= 0.0.0"},
-      {:phoenix_live_dashboard, "~> 0.4"},
-      {:telemetry_metrics, "~> 0.4"},
-      {:telemetry_poller, "~> 0.4"},
-      {:gettext, "~> 0.11"},
+      {:phoenix_live_dashboard, "~> 0.8"},
+      {:telemetry_metrics, "~> 1.0"},
+      {:telemetry_poller, "~> 1.0"},
+      {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
-      {:plug_cowboy, "~> 2.0"},
-      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
-      {:sentry, "~> 8.0"},
-      {:excoveralls, "~> 0.10", only: :test},
-      {:dialyxir, "~> 1.0", only: :dev, runtime: false},
-      {:hackney, "~> 1.8"},
+      {:plug_cowboy, "~> 2.7"},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:sentry, "~> 10.0"},
+      {:excoveralls, "~> 0.18", only: :test},
+      {:dialyxir, "~> 1.4", only: :dev, runtime: false},
+      {:hackney, "~> 1.20"},
       {:ex_machina, "~> 2.7.0", only: :test},
-      {:httpoison, "~> 1.8"}
+      {:httpoison, "~> 2.2"}
     ]
   end
 
