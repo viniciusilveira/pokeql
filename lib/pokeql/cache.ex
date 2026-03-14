@@ -1,17 +1,13 @@
 defmodule Pokeql.Cache do
-  alias Pokeql.CacheQueue
-  alias Pokeql.PokeAPI
-
   def create do
     :ets.new(:pokemons, [:named_table, :set, :public])
-
-    with {:ok, pokemons} <- PokeAPI.get_pokemons() do
-      {:ok, Enum.map(pokemons, &GenServer.cast(CacheQueue, {:insert_pokemon, &1}))}
-    end
+    {:ok, []}
   end
 
   def insert_pokemon(pokemon) do
-    with {:ok, pokemon_details} <- PokeAPI.get_pokemon(pokemon) do
+    poke_api = Application.get_env(:pokeql, :poke_api, Pokeql.PokeAPI)
+
+    with {:ok, pokemon_details} <- poke_api.get_pokemon(pokemon) do
       :ets.insert_new(:pokemons, {pokemon_details["id"], pokemon_details})
     end
   end
