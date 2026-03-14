@@ -59,7 +59,8 @@ defmodule Pokeql.MixProject do
       {:hackney, "~> 1.20"},
       {:ex_machina, "~> 2.7.0", only: :test},
       {:faker, "~> 0.18", only: :test},
-      {:httpoison, "~> 2.2"}
+      {:httpoison, "~> 2.2"},
+      {:mox, "~> 1.1", only: :test}
     ]
   end
 
