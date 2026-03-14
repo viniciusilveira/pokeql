@@ -19,7 +19,7 @@ defmodule Pokeql.CacheQueue do
     end
   end
 
-  def handle_cast({:insert_pokemon, pokemon}, state) do
+  def handle_cast({:insert_pokemon, pokemon}, _state) do
     case Cache.insert_pokemon(pokemon) do
       true ->
         {:noreply, true}
