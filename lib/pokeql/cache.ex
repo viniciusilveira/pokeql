@@ -1,33 +1,43 @@
 defmodule Pokeql.Cache do
+  alias Pokeql.Pokemon
+
   def create do
     :ets.new(:pokemons, [:named_table, :set, :public])
     {:ok, []}
   end
 
-  def insert_pokemon(pokemon) do
-    poke_api = Application.get_env(:pokeql, :poke_api, Pokeql.PokeAPI)
+  @spec put_pokemon(Pokemon.t()) :: :ok
+  def put_pokemon(%Pokemon{id: id, name: name} = pokemon) do
+    :ets.insert(:pokemons, {{:pokemon, id}, pokemon})
+    :ets.insert(:pokemons, {{:pokemon_by_name, name}, pokemon})
+    :ok
+  end
 
-    with {:ok, pokemon_details} <- poke_api.get_pokemon(pokemon) do
-      :ets.insert_new(:pokemons, {pokemon_details["id"], pokemon_details})
+  @spec get_pokemon(integer()) :: {:ok, Pokemon.t()} | :miss
+  def get_pokemon(id) when is_integer(id) do
+    case :ets.lookup(:pokemons, {:pokemon, id}) do
+      [{{:pokemon, ^id}, pokemon}] -> {:ok, pokemon}
+      [] -> :miss
     end
+  end
+
+  @spec get_pokemon_by_name(String.t()) :: {:ok, Pokemon.t()} | :miss
+  def get_pokemon_by_name(name) when is_binary(name) do
+    case :ets.lookup(:pokemons, {:pokemon_by_name, name}) do
+      [{{:pokemon_by_name, ^name}, pokemon}] -> {:ok, pokemon}
+      [] -> :miss
+    end
+  end
+
+  @spec delete_pokemon(Pokemon.t()) :: :ok
+  def delete_pokemon(%Pokemon{id: id, name: name}) do
+    :ets.delete(:pokemons, {:pokemon, id})
+    :ets.delete(:pokemons, {:pokemon_by_name, name})
+    :ok
   end
 
   def get_all do
     :ets.tab2list(:pokemons)
-  end
-
-  def get_pokemon(id) when is_integer(id) do
-    case :ets.lookup(:pokemons, id) do
-      [{^id, pokemon}] -> {:ok, pokemon}
-      [] -> {:error, :not_found}
-    end
-  end
-
-  def get_pokemon(id) when is_binary(id) do
-    case Integer.parse(id) do
-      {int_id, ""} -> get_pokemon(int_id)
-      _ -> {:error, :invalid_id}
-    end
   end
 
   def count do

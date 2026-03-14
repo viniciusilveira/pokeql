@@ -10,6 +10,7 @@ defmodule Pokeql.PokemonContext do
 
   import Ecto.Query, warn: false
   alias Pokeql.Repo
+  alias Pokeql.Cache
 
   alias Pokeql.Pokemon
   alias Pokeql.Pokemon.{
@@ -44,7 +45,25 @@ defmodule Pokeql.PokemonContext do
   """
   @spec get_pokemon(integer()) :: Pokemon.t() | nil
   def get_pokemon(id) do
-    Repo.get(Pokemon, id)
+    case Cache.get_pokemon(id) do
+      {:ok, pokemon} ->
+        pokemon
+
+      :miss ->
+        result =
+          Pokemon
+          |> where([p], p.id == ^id)
+          |> preload(^Pokemon.full_preloads())
+          |> Repo.one()
+
+        case result do
+          nil -> nil
+          pokemon ->
+            populated = Pokemon.populate_virtual_fields(pokemon)
+            Cache.put_pokemon(populated)
+            populated
+        end
+    end
   end
 
   @doc """
@@ -78,9 +97,25 @@ defmodule Pokeql.PokemonContext do
   """
   @spec get_pokemon_by_name(String.t()) :: Pokemon.t() | nil
   def get_pokemon_by_name(name) do
-    Pokemon
-    |> where([p], p.name == ^name)
-    |> Repo.one()
+    case Cache.get_pokemon_by_name(name) do
+      {:ok, pokemon} ->
+        pokemon
+
+      :miss ->
+        result =
+          Pokemon
+          |> where([p], p.name == ^name)
+          |> preload(^Pokemon.full_preloads())
+          |> Repo.one()
+
+        case result do
+          nil -> nil
+          pokemon ->
+            populated = Pokemon.populate_virtual_fields(pokemon)
+            Cache.put_pokemon(populated)
+            populated
+        end
+    end
   end
 
   @doc """
@@ -150,9 +185,17 @@ defmodule Pokeql.PokemonContext do
   """
   @spec update_pokemon(Pokemon.t(), map()) :: {:ok, Pokemon.t()} | {:error, Ecto.Changeset.t()}
   def update_pokemon(%Pokemon{} = pokemon, attrs) do
-    pokemon
-    |> Pokemon.changeset(attrs)
-    |> Repo.update()
+    result =
+      pokemon
+      |> Pokemon.changeset(attrs)
+      |> Repo.update()
+
+    case result do
+      {:ok, _updated} -> Cache.delete_pokemon(pokemon)
+      _ -> :ok
+    end
+
+    result
   end
 
   @doc """
@@ -169,7 +212,14 @@ defmodule Pokeql.PokemonContext do
   """
   @spec delete_pokemon(Pokemon.t()) :: {:ok, Pokemon.t()} | {:error, Ecto.Changeset.t()}
   def delete_pokemon(%Pokemon{} = pokemon) do
-    Repo.delete(pokemon)
+    result = Repo.delete(pokemon)
+
+    case result do
+      {:ok, _deleted} -> Cache.delete_pokemon(pokemon)
+      _ -> :ok
+    end
+
+    result
   end
 
   # =============================================================================
