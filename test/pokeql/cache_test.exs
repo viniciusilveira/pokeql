@@ -10,7 +10,15 @@ defmodule Pokeql.CacheTest do
   end
 
   defp build_pokemon(attrs \\ []) do
-    defaults = %Pokemon{id: 1, name: "bulbasaur", height: 7, weight: 69, order: 1, is_default: true}
+    defaults = %Pokemon{
+      id: 1,
+      name: "bulbasaur",
+      height: 7,
+      weight: 69,
+      order: 1,
+      is_default: true
+    }
+
     struct(defaults, attrs)
   end
 

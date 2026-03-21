@@ -17,8 +17,9 @@ defmodule Pokeql.Repo.Migrations.CreatePokemonStats do
     create index(:pokemon_stats, [:base_stat])
 
     create constraint(:pokemon_stats, :base_stat_must_be_valid,
-           check: "base_stat >= 1 AND base_stat <= 255")
-    create constraint(:pokemon_stats, :effort_must_be_valid,
-           check: "effort >= 0 AND effort <= 3")
+             check: "base_stat >= 1 AND base_stat <= 255"
+           )
+
+    create constraint(:pokemon_stats, :effort_must_be_valid, check: "effort >= 0 AND effort <= 3")
   end
 end

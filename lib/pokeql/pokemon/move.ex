@@ -80,7 +80,9 @@ defmodule Pokeql.Pokemon.Move do
     |> validate_length(:name, min: 1, max: 100)
     |> validate_length(:short_effect, max: 1000)
     |> validate_format(:name, ~r/^[a-z0-9\-]+$/, message: "must be lowercase with hyphens")
-    |> validate_format(:generation_name, ~r/^generation-[ivx]+$/, message: "must be in format 'generation-i/ii/iii/etc'")
+    |> validate_format(:generation_name, ~r/^generation-[ivx]+$/,
+      message: "must be in format 'generation-i/ii/iii/etc'"
+    )
     |> validate_accuracy()
     |> validate_power()
     |> validate_pp()
@@ -94,43 +96,55 @@ defmodule Pokeql.Pokemon.Move do
 
   defp validate_accuracy(changeset) do
     changeset
-    |> validate_number(:accuracy, greater_than_or_equal_to: 1, less_than_or_equal_to: 100,
-         message: "must be between 1 and 100, or nil for moves that always hit")
+    |> validate_number(:accuracy,
+      greater_than_or_equal_to: 1,
+      less_than_or_equal_to: 100,
+      message: "must be between 1 and 100, or nil for moves that always hit"
+    )
   end
 
   defp validate_power(changeset) do
     changeset
-    |> validate_number(:power, greater_than_or_equal_to: 0,
-         message: "must be non-negative, or nil for non-damaging moves")
+    |> validate_number(:power,
+      greater_than_or_equal_to: 0,
+      message: "must be non-negative, or nil for non-damaging moves"
+    )
   end
 
   defp validate_pp(changeset) do
     changeset
-    |> validate_number(:pp, greater_than: 0,
-         message: "must be positive")
+    |> validate_number(:pp,
+      greater_than: 0,
+      message: "must be positive"
+    )
   end
 
   defp validate_priority(changeset) do
     changeset
-    |> validate_inclusion(:priority, -8..5,
-         message: "must be between -8 and 5")
+    |> validate_inclusion(:priority, -8..5, message: "must be between -8 and 5")
   end
 
   defp validate_damage_class(changeset) do
     case get_change(changeset, :damage_class_name) do
-      nil -> changeset
+      nil ->
+        changeset
+
       _damage_class ->
         validate_inclusion(changeset, :damage_class_name, valid_damage_classes(),
-          message: "must be a valid damage class")
+          message: "must be a valid damage class"
+        )
     end
   end
 
   defp validate_type_name(changeset) do
     case get_change(changeset, :type_name) do
-      nil -> changeset
+      nil ->
+        changeset
+
       _type_name ->
         validate_inclusion(changeset, :type_name, valid_type_names(),
-          message: "must be a valid Pokemon type")
+          message: "must be a valid Pokemon type"
+        )
     end
   end
 

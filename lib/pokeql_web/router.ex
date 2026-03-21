@@ -5,8 +5,15 @@ defmodule PokeqlWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", PokeqlWeb do
+  scope "/api" do
     pipe_through :api
+    forward "/graphql", Absinthe.Plug, schema: PokeqlWeb.Schema
+  end
+
+  if Mix.env() == :dev do
+    forward "/graphiql", Absinthe.Plug.GraphiQL,
+      schema: PokeqlWeb.Schema,
+      interface: :playground
   end
 
   # Enables LiveDashboard only for development

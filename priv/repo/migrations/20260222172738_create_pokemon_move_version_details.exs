@@ -17,6 +17,7 @@ defmodule Pokeql.Repo.Migrations.CreatePokemonMoveVersionDetails do
     create index(:pokemon_move_version_details, [:level_learned_at])
 
     create constraint(:pokemon_move_version_details, :level_must_be_valid,
-           check: "level_learned_at >= 0 AND level_learned_at <= 100")
+             check: "level_learned_at >= 0 AND level_learned_at <= 100"
+           )
   end
 end

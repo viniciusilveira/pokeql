@@ -92,8 +92,12 @@ defmodule Pokeql.Pokemon.Sprite do
   # Private validation helper
   defp validate_url(changeset, field) do
     case get_change(changeset, field) do
-      nil -> changeset
-      "" -> changeset
+      nil ->
+        changeset
+
+      "" ->
+        changeset
+
       url ->
         if valid_url?(url) do
           changeset
@@ -162,8 +166,12 @@ defmodule Pokeql.Pokemon.Sprite do
   Gets the primary sprite URL (front_default if available).
   """
   @spec primary_sprite_url(t()) :: String.t() | nil
-  def primary_sprite_url(%__MODULE__{front_default: url}) when is_binary(url) and url != "", do: url
-  def primary_sprite_url(%__MODULE__{back_default: url}) when is_binary(url) and url != "", do: url
+  def primary_sprite_url(%__MODULE__{front_default: url}) when is_binary(url) and url != "",
+    do: url
+
+  def primary_sprite_url(%__MODULE__{back_default: url}) when is_binary(url) and url != "",
+    do: url
+
   def primary_sprite_url(%__MODULE__{front_shiny: url}) when is_binary(url) and url != "", do: url
   def primary_sprite_url(%__MODULE__{}), do: nil
 end

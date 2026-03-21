@@ -57,8 +57,9 @@ defmodule Pokeql.Pokemon.SpeciesTest do
 
     test "validates name uniqueness" do
       # First species
-      {:ok, _species} = Species.changeset(%Species{}, @valid_attrs)
-                       |> Repo.insert()
+      {:ok, _species} =
+        Species.changeset(%Species{}, @valid_attrs)
+        |> Repo.insert()
 
       # Try to insert another with same name
       changeset = Species.changeset(%Species{}, @valid_attrs)

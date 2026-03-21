@@ -61,7 +61,9 @@ defmodule Pokeql.Pokemon.GameVersion do
   # Private validation function
   defp validate_known_game_version(changeset) do
     case get_change(changeset, :name) do
-      nil -> changeset
+      nil ->
+        changeset
+
       name ->
         if name in known_game_versions() do
           changeset

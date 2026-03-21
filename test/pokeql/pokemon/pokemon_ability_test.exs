@@ -82,11 +82,12 @@ defmodule Pokeql.Pokemon.PokemonAbilityTest do
       pokemon_ability = insert(:pokemon_ability)
 
       # Try to insert another ability for same pokemon and slot
-      duplicate_attrs = params_for(:pokemon_ability,
-        pokemon_id: pokemon_ability.pokemon_id,
-        ability_id: pokemon_ability.ability_id,
-        slot: pokemon_ability.slot
-      )
+      duplicate_attrs =
+        params_for(:pokemon_ability,
+          pokemon_id: pokemon_ability.pokemon_id,
+          ability_id: pokemon_ability.ability_id,
+          slot: pokemon_ability.slot
+        )
 
       changeset = PokemonAbility.changeset(%PokemonAbility{}, duplicate_attrs)
       {:error, changeset} = Repo.insert(changeset)
@@ -94,7 +95,7 @@ defmodule Pokeql.Pokemon.PokemonAbilityTest do
     end
 
     test "validates foreign key constraints" do
-      valid_attrs = params_for(:pokemon_ability, pokemon_id: 999999, ability_id: 999999)
+      valid_attrs = params_for(:pokemon_ability, pokemon_id: 999_999, ability_id: 999_999)
 
       changeset = PokemonAbility.changeset(%PokemonAbility{}, valid_attrs)
       {:error, changeset} = Repo.insert(changeset)

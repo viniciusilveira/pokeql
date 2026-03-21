@@ -90,6 +90,10 @@ defmodule Pokeql.PokeAPIFixtures do
        "base_experience" => 64,
        "order" => 1,
        "is_default" => true,
+       "species" => %{
+         "name" => "bulbasaur",
+         "url" => "https://pokeapi.co/api/v2/pokemon-species/1/"
+       },
        "abilities" => [
          %{
            "ability" => %{"name" => "overgrow", "url" => "https://pokeapi.co/api/v2/ability/65/"},
@@ -315,7 +319,8 @@ defmodule Pokeql.PokeAPIFixtures do
          %{
            "effect" =>
              "When this Pokémon has 1/3 or less of its HP remaining, its grass-type moves inflict 1.5× as much regular damage.",
-           "short_effect" => "Strengthens grass moves to inflict 1.5× damage at 1/3 max HP or less.",
+           "short_effect" =>
+             "Strengthens grass moves to inflict 1.5× damage at 1/3 max HP or less.",
            "language" => %{"name" => "en"}
          }
        ]
@@ -331,8 +336,7 @@ defmodule Pokeql.PokeAPIFixtures do
        "generation" => %{"name" => "generation-iii"},
        "effect_entries" => [
          %{
-           "effect" =>
-             "This Pokémon's Speed is doubled during strong sunlight.",
+           "effect" => "This Pokémon's Speed is doubled during strong sunlight.",
            "short_effect" => "Doubles Speed during strong sunlight.",
            "language" => %{"name" => "en"}
          }
@@ -490,7 +494,10 @@ defmodule Pokeql.PokeAPIFixtures do
      %{
        "name" => "red",
        "id" => 1,
-       "version_group" => %{"name" => "red-blue", "url" => "https://pokeapi.co/api/v2/version-group/1/"}
+       "version_group" => %{
+         "name" => "red-blue",
+         "url" => "https://pokeapi.co/api/v2/version-group/1/"
+       }
      }}
   end
 
@@ -499,7 +506,10 @@ defmodule Pokeql.PokeAPIFixtures do
      %{
        "name" => "blue",
        "id" => 2,
-       "version_group" => %{"name" => "red-blue", "url" => "https://pokeapi.co/api/v2/version-group/1/"}
+       "version_group" => %{
+         "name" => "red-blue",
+         "url" => "https://pokeapi.co/api/v2/version-group/1/"
+       }
      }}
   end
 
@@ -508,7 +518,10 @@ defmodule Pokeql.PokeAPIFixtures do
      %{
        "name" => "yellow",
        "id" => 3,
-       "version_group" => %{"name" => "yellow", "url" => "https://pokeapi.co/api/v2/version-group/2/"}
+       "version_group" => %{
+         "name" => "yellow",
+         "url" => "https://pokeapi.co/api/v2/version-group/2/"
+       }
      }}
   end
 end

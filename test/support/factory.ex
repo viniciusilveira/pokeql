@@ -15,8 +15,12 @@ defmodule Pokeql.Factory do
       generation_name: random_generation(),
       color_name: Enum.random(~w[red blue green yellow purple brown black white gray pink]),
       shape_name: Enum.random(~w[ball quadruped fish blob humanoid bug flying dragon plant]),
-      habitat_name: Enum.random(~w[cave city forest grassland mountain rare rough-terrain sea urban water-edge]),
-      growth_rate_name: Enum.random(~w[slow medium fast medium-slow slow-then-very-fast fast-then-very-slow]),
+      habitat_name:
+        Enum.random(
+          ~w[cave city forest grassland mountain rare rough-terrain sea urban water-edge]
+        ),
+      growth_rate_name:
+        Enum.random(~w[slow medium fast medium-slow slow-then-very-fast fast-then-very-slow]),
       gender_rate: Enum.random(-1..8),
       capture_rate: Enum.random(3..255),
       base_happiness: Enum.random(0..140),
@@ -130,6 +134,17 @@ defmodule Pokeql.Factory do
       stat: build(:stat),
       base_stat: Enum.random(10..255),
       effort: Enum.random(0..3)
+    }
+  end
+
+  def sprite_factory do
+    %Pokeql.Pokemon.Sprite{
+      pokemon: build(:pokemon),
+      front_default:
+        "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",
+      front_shiny: nil,
+      back_default: nil,
+      back_shiny: nil
     }
   end
 

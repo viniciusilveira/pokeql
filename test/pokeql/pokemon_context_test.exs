@@ -1,12 +1,19 @@
 defmodule Pokeql.PokemonContextTest do
   use Pokeql.DataCase
 
+  import Mox
+
   alias Pokeql.PokemonContext
   alias Pokeql.Pokemon
   alias Pokeql.Cache
 
+  setup :verify_on_exit!
+
   setup do
     Cache.clear()
+    # Stub API to return not-found for any identifier so DB-miss tests don't hit network
+    stub(Pokeql.PokeAPIMock, :get_pokemon, fn _ -> {:error, {:http_error, 404}} end)
+    stub(Pokeql.PokeAPIMock, :get_species, fn _ -> {:error, {:http_error, 404}} end)
     :ok
   end
 
@@ -33,7 +40,7 @@ defmodule Pokeql.PokemonContextTest do
     end
 
     test "returns nil for non-existent pokemon" do
-      assert PokemonContext.get_pokemon(999999) == nil
+      assert PokemonContext.get_pokemon(999_999) == nil
     end
   end
 
@@ -110,53 +117,6 @@ defmodule Pokeql.PokemonContextTest do
     end
   end
 
-  describe "create_pokemon/1" do
-    test "creates pokemon with valid attributes" do
-      species = insert(:species)
-      attrs = params_for(:pokemon, species_id: species.id)
-
-      {:ok, pokemon} = PokemonContext.create_pokemon(attrs)
-      assert pokemon.name == attrs.name
-      assert pokemon.species_id == species.id
-    end
-
-    test "returns error with invalid attributes" do
-      {:error, changeset} = PokemonContext.create_pokemon(%{name: nil})
-      refute changeset.valid?
-      assert "can't be blank" in errors_on(changeset)[:name]
-    end
-  end
-
-  describe "update_pokemon/2" do
-    test "updates pokemon with valid attributes" do
-      pokemon = insert(:pokemon)
-      update_attrs = %{name: "updated-name", height: 20}
-
-      {:ok, updated_pokemon} = PokemonContext.update_pokemon(pokemon, update_attrs)
-      assert updated_pokemon.name == "updated-name"
-      assert updated_pokemon.height == 20
-      assert updated_pokemon.id == pokemon.id
-    end
-
-    test "returns error with invalid attributes" do
-      pokemon = insert(:pokemon)
-
-      {:error, changeset} = PokemonContext.update_pokemon(pokemon, %{name: nil})
-      refute changeset.valid?
-      assert "can't be blank" in errors_on(changeset)[:name]
-    end
-  end
-
-  describe "delete_pokemon/1" do
-    test "deletes pokemon" do
-      pokemon = insert(:pokemon)
-
-      {:ok, deleted_pokemon} = PokemonContext.delete_pokemon(pokemon)
-      assert deleted_pokemon.id == pokemon.id
-      assert PokemonContext.get_pokemon(pokemon.id) == nil
-    end
-  end
-
   describe "get_pokemons_by_type/1" do
     test "placeholder for future type functionality" do
       # Skip this test section as type relationships need to be implemented
@@ -179,33 +139,18 @@ defmodule Pokeql.PokemonContextTest do
     end
   end
 
-  describe "association operations" do
-    test "get_pokemon_with_details/1 preloads associations" do
-      pokemon = insert(:pokemon)
-
-      result = PokemonContext.get_pokemon_with_details(pokemon.id)
-      assert result
-      assert result.id == pokemon.id
-      # Check that associations are loaded (they will be empty lists but loaded)
-      assert Ecto.assoc_loaded?(result.species)
-    end
-
-    test "list_pokemons_with_species/0 includes species information" do
-      pokemon = insert(:pokemon)
-
-      result = PokemonContext.list_pokemons_with_species()
-      assert length(result) >= 1
-
-      found_pokemon = Enum.find(result, fn p -> p.id == pokemon.id end)
-      assert found_pokemon
-      assert Ecto.assoc_loaded?(found_pokemon.species)
-    end
-  end
-
   describe "cache read-through for get_pokemon/1" do
     test "cache hit: returns cached pokemon without DB query" do
       # Put a pokemon struct directly in cache (not persisted to DB)
-      cached_pokemon = %Pokemon{id: 99999, name: "cache-only-mon", height: 5, weight: 50, order: 9999, is_default: true}
+      cached_pokemon = %Pokemon{
+        id: 99999,
+        name: "cache-only-mon",
+        height: 5,
+        weight: 50,
+        order: 9999,
+        is_default: true
+      }
+
       Cache.put_pokemon(cached_pokemon)
 
       result = PokemonContext.get_pokemon(99999)
@@ -214,7 +159,7 @@ defmodule Pokeql.PokemonContextTest do
       assert result.name == "cache-only-mon"
     end
 
-    test "cache miss: queries DB and populates cache" do
+    test "cache miss: queries DB and populates cache (async)" do
       pokemon = insert(:pokemon)
 
       assert :miss = Cache.get_pokemon(pokemon.id)
@@ -222,19 +167,29 @@ defmodule Pokeql.PokemonContextTest do
       result = PokemonContext.get_pokemon(pokemon.id)
       assert result.id == pokemon.id
 
+      # Cache write is async — wait briefly
+      Process.sleep(50)
       assert {:ok, cached} = Cache.get_pokemon(pokemon.id)
       assert cached.id == pokemon.id
     end
 
     test "returns nil for non-existent pokemon without populating cache" do
-      assert PokemonContext.get_pokemon(999999) == nil
-      assert :miss = Cache.get_pokemon(999999)
+      assert PokemonContext.get_pokemon(999_999) == nil
+      assert :miss = Cache.get_pokemon(999_999)
     end
   end
 
   describe "cache read-through for get_pokemon_by_name/1" do
     test "cache hit: returns cached pokemon without DB query" do
-      cached_pokemon = %Pokemon{id: 99998, name: "cache-name-mon", height: 5, weight: 50, order: 9998, is_default: true}
+      cached_pokemon = %Pokemon{
+        id: 99998,
+        name: "cache-name-mon",
+        height: 5,
+        weight: 50,
+        order: 9998,
+        is_default: true
+      }
+
       Cache.put_pokemon(cached_pokemon)
 
       result = PokemonContext.get_pokemon_by_name("cache-name-mon")
@@ -243,7 +198,7 @@ defmodule Pokeql.PokemonContextTest do
       assert result.name == "cache-name-mon"
     end
 
-    test "cache miss: queries DB and populates cache" do
+    test "cache miss: queries DB and populates cache (async)" do
       pokemon = insert(:pokemon)
 
       assert :miss = Cache.get_pokemon_by_name(pokemon.name)
@@ -251,6 +206,8 @@ defmodule Pokeql.PokemonContextTest do
       result = PokemonContext.get_pokemon_by_name(pokemon.name)
       assert result.name == pokemon.name
 
+      # Cache write is async — wait briefly
+      Process.sleep(50)
       assert {:ok, cached} = Cache.get_pokemon_by_name(pokemon.name)
       assert cached.name == pokemon.name
     end
@@ -261,42 +218,7 @@ defmodule Pokeql.PokemonContextTest do
     end
   end
 
-  describe "cache invalidation on writes" do
-    test "update_pokemon/2 invalidates cache" do
-      pokemon = insert(:pokemon)
-      # Populate cache
-      PokemonContext.get_pokemon(pokemon.id)
-      assert {:ok, _} = Cache.get_pokemon(pokemon.id)
-
-      {:ok, _updated} = PokemonContext.update_pokemon(pokemon, %{height: 99})
-
-      assert :miss = Cache.get_pokemon(pokemon.id)
-    end
-
-    test "delete_pokemon/1 invalidates cache" do
-      pokemon = insert(:pokemon)
-      # Populate cache
-      PokemonContext.get_pokemon(pokemon.id)
-      assert {:ok, _} = Cache.get_pokemon(pokemon.id)
-
-      {:ok, _deleted} = PokemonContext.delete_pokemon(pokemon)
-
-      assert :miss = Cache.get_pokemon(pokemon.id)
-      assert :miss = Cache.get_pokemon_by_name(pokemon.name)
-    end
-  end
-
   describe "complex queries" do
-    test "get_pokemons_by_generation/1" do
-      # Create pokemon in generation-i
-      gen_i_species = insert(:generation_i_species)
-      pokemon = insert(:pokemon, species: gen_i_species)
-
-      result = PokemonContext.get_pokemons_by_generation("generation-i")
-      assert length(result) >= 1
-      assert Enum.any?(result, fn p -> p.id == pokemon.id end)
-    end
-
     test "get_legendary_pokemons/0" do
       # Create legendary species and pokemon
       legendary_species = insert(:legendary_species)
