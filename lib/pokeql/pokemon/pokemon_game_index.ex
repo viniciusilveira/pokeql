@@ -57,10 +57,13 @@ defmodule Pokeql.Pokemon.PokemonGameIndex do
     pokemon_game_index
     |> cast(attrs, [:pokemon_id, :game_version_id, :game_index])
     |> validate_required([:pokemon_id, :game_version_id, :game_index])
-    |> validate_number(:game_index, greater_than: 0,
-         message: "must be a positive integer")
+    |> validate_number(:game_index,
+      greater_than: 0,
+      message: "must be a positive integer"
+    )
     |> unique_constraint([:pokemon_id, :game_version_id],
-         name: :pokemon_game_indices_pokemon_id_game_version_id_index)
+      name: :pokemon_game_indices_pokemon_id_game_version_id_index
+    )
     |> foreign_key_constraint(:pokemon_id)
     |> foreign_key_constraint(:game_version_id)
   end

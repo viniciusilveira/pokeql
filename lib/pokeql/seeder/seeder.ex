@@ -132,8 +132,16 @@ defmodule Pokeql.Seeder.Seeder do
       end)
 
     # Step 6: Insert reference tables
-    insert_all_idempotent(VersionGroup, Enum.map(version_groups_raw, &Transformer.version_group_attrs/1))
-    insert_all_idempotent(GameVersion, Enum.map(game_versions_raw, &Transformer.game_version_attrs/1))
+    insert_all_idempotent(
+      VersionGroup,
+      Enum.map(version_groups_raw, &Transformer.version_group_attrs/1)
+    )
+
+    insert_all_idempotent(
+      GameVersion,
+      Enum.map(game_versions_raw, &Transformer.game_version_attrs/1)
+    )
+
     insert_all_idempotent(Species, Enum.map(species_raw_list, &Transformer.species_attrs/1))
     insert_all_idempotent(Ability, Enum.map(abilities_raw, &Transformer.ability_attrs/1))
     insert_all_idempotent(Type, Enum.map(types_raw, &Transformer.type_attrs/1))
@@ -255,7 +263,11 @@ defmodule Pokeql.Seeder.Seeder do
           game_version_id = Map.get(game_version_map, version_name)
 
           if game_version_id do
-            %{pokemon_id: pokemon_id, game_version_id: game_version_id, game_index: gi["game_index"]}
+            %{
+              pokemon_id: pokemon_id,
+              game_version_id: game_version_id,
+              game_index: gi["game_index"]
+            }
           else
             nil
           end

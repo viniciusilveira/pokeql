@@ -16,7 +16,6 @@ defmodule Pokeql.Repo.Migrations.CreatePokemonAbilities do
     create index(:pokemon_abilities, [:ability_id])
     create index(:pokemon_abilities, [:is_hidden])
 
-    create constraint(:pokemon_abilities, :slot_must_be_valid,
-           check: "slot >= 1 AND slot <= 3")
+    create constraint(:pokemon_abilities, :slot_must_be_valid, check: "slot >= 1 AND slot <= 3")
   end
 end

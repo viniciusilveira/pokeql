@@ -56,7 +56,9 @@ defmodule Pokeql.Pokemon.VersionGroup do
     |> validate_required([:name, :generation_name, :sort_order])
     |> validate_length(:name, min: 1, max: 50)
     |> validate_format(:name, ~r/^[a-z0-9\-]+$/, message: "must be lowercase with hyphens")
-    |> validate_format(:generation_name, ~r/^generation-[ivx]+$/, message: "must be in format 'generation-i/ii/iii/etc'")
+    |> validate_format(:generation_name, ~r/^generation-[ivx]+$/,
+      message: "must be in format 'generation-i/ii/iii/etc'"
+    )
     |> validate_number(:sort_order, greater_than: 0, message: "must be positive")
     |> unique_constraint(:name)
     |> unique_constraint(:sort_order)

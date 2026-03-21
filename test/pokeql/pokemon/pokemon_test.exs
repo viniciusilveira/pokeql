@@ -45,7 +45,9 @@ defmodule Pokeql.Pokemon.PokemonTest do
     test "validates name uniqueness across different species" do
       pokemon = insert(:pokemon)
       other_species = insert(:species)
-      duplicate_name_attrs = params_for(:pokemon, name: pokemon.name, species_id: other_species.id)
+
+      duplicate_name_attrs =
+        params_for(:pokemon, name: pokemon.name, species_id: other_species.id)
 
       changeset = Pokemon.changeset(%Pokemon{}, duplicate_name_attrs)
       {:error, changeset} = Repo.insert(changeset)
@@ -67,14 +69,18 @@ defmodule Pokeql.Pokemon.PokemonTest do
       # weight: 69 hectograms = 6.9 kg, height: 7 decimeters = 0.7 m
       _expected_bmi = 6.9 / (0.7 * 0.7)
 
-      bmi = Pokemon.calculate_total_base_stats(pokemon) # Using existing function for now
+      # Using existing function for now
+      bmi = Pokemon.calculate_total_base_stats(pokemon)
       # This test would need proper BMI calculation implementation
-      assert is_nil(bmi) # pokemon_stats not loaded
+      # pokemon_stats not loaded
+      assert is_nil(bmi)
     end
 
     test "is_heavy?/1 determines if pokemon is heavy" do
-      light_pokemon = insert(:pokemon, weight: 50)  # 5kg
-      heavy_pokemon = insert(:pokemon, weight: 4600) # 460kg
+      # 5kg
+      light_pokemon = insert(:pokemon, weight: 50)
+      # 460kg
+      heavy_pokemon = insert(:pokemon, weight: 4600)
 
       assert heavy_pokemon.weight > light_pokemon.weight
     end

@@ -26,7 +26,12 @@ defmodule Pokeql.Repo.Migrations.CreateSpecies do
     create index(:species, [:is_legendary])
     create index(:species, [:is_mythical])
 
-    create constraint(:species, :capture_rate_valid, check: "capture_rate >= 0 AND capture_rate <= 255")
-    create constraint(:species, :gender_rate_valid, check: "gender_rate >= -1 AND gender_rate <= 8")
+    create constraint(:species, :capture_rate_valid,
+             check: "capture_rate >= 0 AND capture_rate <= 255"
+           )
+
+    create constraint(:species, :gender_rate_valid,
+             check: "gender_rate >= -1 AND gender_rate <= 8"
+           )
   end
 end

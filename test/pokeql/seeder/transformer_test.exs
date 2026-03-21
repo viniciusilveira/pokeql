@@ -51,7 +51,9 @@ defmodule Pokeql.Seeder.TransformerTest do
       assert attrs.name == "overgrow"
       assert attrs.generation_name == "generation-iii"
       assert attrs.is_main_series == true
-      assert attrs.short_effect == "Strengthens grass moves to inflict 1.5× damage at 1/3 max HP or less."
+
+      assert attrs.short_effect ==
+               "Strengthens grass moves to inflict 1.5× damage at 1/3 max HP or less."
     end
   end
 

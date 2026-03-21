@@ -62,15 +62,18 @@ defmodule Pokeql.Pokemon.PokemonStat do
     |> cast(attrs, [:pokemon_id, :stat_id, :base_stat, :effort])
     |> validate_required([:pokemon_id, :stat_id, :base_stat, :effort])
     |> validate_number(:base_stat,
-         greater_than_or_equal_to: 1,
-         less_than_or_equal_to: 255,
-         message: "must be between 1 and 255")
+      greater_than_or_equal_to: 1,
+      less_than_or_equal_to: 255,
+      message: "must be between 1 and 255"
+    )
     |> validate_number(:effort,
-         greater_than_or_equal_to: 0,
-         less_than_or_equal_to: 3,
-         message: "must be between 0 and 3")
+      greater_than_or_equal_to: 0,
+      less_than_or_equal_to: 3,
+      message: "must be between 0 and 3"
+    )
     |> unique_constraint([:pokemon_id, :stat_id],
-         name: :pokemon_stats_pokemon_id_stat_id_index)
+      name: :pokemon_stats_pokemon_id_stat_id_index
+    )
     |> foreign_key_constraint(:pokemon_id)
     |> foreign_key_constraint(:stat_id)
   end

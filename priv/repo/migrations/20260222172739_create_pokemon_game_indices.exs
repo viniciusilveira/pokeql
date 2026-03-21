@@ -16,6 +16,7 @@ defmodule Pokeql.Repo.Migrations.CreatePokemonGameIndices do
     create index(:pokemon_game_indices, [:game_index])
 
     create constraint(:pokemon_game_indices, :game_index_must_be_positive,
-           check: "game_index > 0")
+             check: "game_index > 0"
+           )
   end
 end

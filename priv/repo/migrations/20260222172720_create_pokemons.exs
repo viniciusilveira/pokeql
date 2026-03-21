@@ -18,10 +18,12 @@ defmodule Pokeql.Repo.Migrations.CreatePokemons do
     create index(:pokemons, [:species_id])
     create index(:pokemons, [:order])
     create index(:pokemons, [:is_default])
-    
+
     create constraint(:pokemons, :height_must_be_positive, check: "height > 0")
     create constraint(:pokemons, :weight_must_be_positive, check: "weight > 0")
-    create constraint(:pokemons, :base_experience_must_be_non_negative, 
-           check: "base_experience >= 0")
+
+    create constraint(:pokemons, :base_experience_must_be_non_negative,
+             check: "base_experience >= 0"
+           )
   end
 end

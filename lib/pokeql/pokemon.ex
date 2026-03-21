@@ -32,7 +32,8 @@ defmodule Pokeql.Pokemon do
           pokemon_moves: [Pokeql.Pokemon.PokemonMove.t()] | Ecto.Association.NotLoaded.t(),
           moves: [Pokeql.Pokemon.Move.t()] | Ecto.Association.NotLoaded.t(),
           sprites: Pokeql.Pokemon.Sprite.t() | Ecto.Association.NotLoaded.t() | nil,
-          pokemon_game_indices: [Pokeql.Pokemon.PokemonGameIndex.t()] | Ecto.Association.NotLoaded.t(),
+          pokemon_game_indices:
+            [Pokeql.Pokemon.PokemonGameIndex.t()] | Ecto.Association.NotLoaded.t(),
           inserted_at: DateTime.t(),
           updated_at: DateTime.t()
         }
@@ -49,8 +50,10 @@ defmodule Pokeql.Pokemon do
     field :total_base_stats, :integer, virtual: true
     field :type_names, {:array, :string}, virtual: true, default: []
     field :ability_names, {:array, :string}, virtual: true, default: []
-    field :height_meters, :float, virtual: true  # height in meters
-    field :weight_kg, :float, virtual: true      # weight in kg
+    # height in meters
+    field :height_meters, :float, virtual: true
+    # weight in kg
+    field :weight_kg, :float, virtual: true
 
     # Primary relationship
     belongs_to :species, Pokeql.Pokemon.Species
@@ -117,7 +120,10 @@ defmodule Pokeql.Pokemon do
     |> validate_format(:name, ~r/^[a-z0-9\-]+$/, message: "must be lowercase with hyphens")
     |> validate_number(:height, greater_than: 0, message: "must be positive (in decimeters)")
     |> validate_number(:weight, greater_than: 0, message: "must be positive (in hectograms)")
-    |> validate_number(:base_experience, greater_than_or_equal_to: 0, message: "must be non-negative")
+    |> validate_number(:base_experience,
+      greater_than_or_equal_to: 0,
+      message: "must be non-negative"
+    )
     |> validate_number(:order, greater_than_or_equal_to: 0)
     |> validate_species_exists()
     |> unique_constraint(:name)
@@ -145,6 +151,7 @@ defmodule Pokeql.Pokemon do
     changeset
     |> put_height_meters()
     |> put_weight_kg()
+
     # Note: total_base_stats, type_names, ability_names will be set when loading with associations
   end
 
@@ -180,7 +187,9 @@ defmodule Pokeql.Pokemon do
 
   """
   @spec calculate_total_base_stats(t()) :: integer() | nil
-  def calculate_total_base_stats(%__MODULE__{pokemon_stats: %Ecto.Association.NotLoaded{}}), do: nil
+  def calculate_total_base_stats(%__MODULE__{pokemon_stats: %Ecto.Association.NotLoaded{}}),
+    do: nil
+
   def calculate_total_base_stats(%__MODULE__{pokemon_stats: pokemon_stats}) do
     pokemon_stats
     |> Enum.map(& &1.base_stat)
@@ -202,6 +211,7 @@ defmodule Pokeql.Pokemon do
   """
   @spec extract_type_names(t()) :: [String.t()] | []
   def extract_type_names(%__MODULE__{types: %Ecto.Association.NotLoaded{}}), do: []
+
   def extract_type_names(%__MODULE__{types: types}) do
     Enum.map(types, & &1.name)
   end
@@ -221,6 +231,7 @@ defmodule Pokeql.Pokemon do
   """
   @spec extract_ability_names(t()) :: [String.t()] | []
   def extract_ability_names(%__MODULE__{abilities: %Ecto.Association.NotLoaded{}}), do: []
+
   def extract_ability_names(%__MODULE__{abilities: abilities}) do
     Enum.map(abilities, & &1.name)
   end

@@ -73,8 +73,10 @@ defmodule Pokeql.Pokemon.PokemonAbility do
     case {get_field(changeset, :slot), get_field(changeset, :is_hidden)} do
       {3, false} ->
         add_error(changeset, :is_hidden, "slot 3 abilities must be hidden")
+
       {slot, true} when slot in [1, 2] ->
         add_error(changeset, :is_hidden, "only slot 3 abilities can be hidden")
+
       _ ->
         changeset
     end

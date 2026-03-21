@@ -7,9 +7,20 @@ defmodule Pokeql.Seeder.SeederTest do
 
   alias Pokeql.Seeder.Seeder
   alias Pokeql.Repo
+
   alias Pokeql.Pokemon.{
-    Species, Ability, Type, Stat, Move, VersionGroup, GameVersion,
-    PokemonAbility, PokemonType, PokemonStat, PokemonMove, Sprite
+    Species,
+    Ability,
+    Type,
+    Stat,
+    Move,
+    VersionGroup,
+    GameVersion,
+    PokemonAbility,
+    PokemonType,
+    PokemonStat,
+    PokemonMove,
+    Sprite
   }
 
   setup :verify_on_exit!

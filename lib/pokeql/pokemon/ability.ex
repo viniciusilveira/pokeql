@@ -60,7 +60,9 @@ defmodule Pokeql.Pokemon.Ability do
     |> validate_length(:name, min: 1, max: 100)
     |> validate_length(:short_effect, max: 1000)
     |> validate_format(:name, ~r/^[a-z0-9\-]+$/, message: "must be lowercase with hyphens")
-    |> validate_format(:generation_name, ~r/^generation-[ivx]+$/, message: "must be in format 'generation-i/ii/iii/etc'")
+    |> validate_format(:generation_name, ~r/^generation-[ivx]+$/,
+      message: "must be in format 'generation-i/ii/iii/etc'"
+    )
     |> unique_constraint(:name)
   end
 

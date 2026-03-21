@@ -16,7 +16,8 @@ defmodule Pokeql.Pokemon.PokemonMove do
           move_id: integer(),
           pokemon: Pokeql.Pokemon.t() | Ecto.Association.NotLoaded.t(),
           move: Pokeql.Pokemon.Move.t() | Ecto.Association.NotLoaded.t(),
-          pokemon_move_version_details: [Pokeql.Pokemon.PokemonMoveVersionDetail.t()] | Ecto.Association.NotLoaded.t(),
+          pokemon_move_version_details:
+            [Pokeql.Pokemon.PokemonMoveVersionDetail.t()] | Ecto.Association.NotLoaded.t(),
           inserted_at: DateTime.t(),
           updated_at: DateTime.t()
         }
@@ -58,7 +59,8 @@ defmodule Pokeql.Pokemon.PokemonMove do
     |> cast(attrs, [:pokemon_id, :move_id])
     |> validate_required([:pokemon_id, :move_id])
     |> unique_constraint([:pokemon_id, :move_id],
-         name: :pokemon_moves_pokemon_id_move_id_index)
+      name: :pokemon_moves_pokemon_id_move_id_index
+    )
     |> foreign_key_constraint(:pokemon_id)
     |> foreign_key_constraint(:move_id)
   end

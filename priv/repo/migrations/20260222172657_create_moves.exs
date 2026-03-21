@@ -23,11 +23,11 @@ defmodule Pokeql.Repo.Migrations.CreateMoves do
     create index(:moves, [:power])
 
     create constraint(:moves, :accuracy_valid,
-           check: "accuracy IS NULL OR (accuracy >= 1 AND accuracy <= 100)")
-    create constraint(:moves, :power_non_negative,
-           check: "power IS NULL OR power >= 0")
+             check: "accuracy IS NULL OR (accuracy >= 1 AND accuracy <= 100)"
+           )
+
+    create constraint(:moves, :power_non_negative, check: "power IS NULL OR power >= 0")
     create constraint(:moves, :pp_positive, check: "pp IS NULL OR pp > 0")
-    create constraint(:moves, :priority_valid,
-           check: "priority >= -8 AND priority <= 5")
+    create constraint(:moves, :priority_valid, check: "priority >= -8 AND priority <= 5")
   end
 end

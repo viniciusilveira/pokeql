@@ -61,13 +61,16 @@ defmodule Pokeql.Pokemon.PokemonMoveVersionDetail do
     |> cast(attrs, [:pokemon_move_id, :version_group_id, :level_learned_at, :learn_method])
     |> validate_required([:pokemon_move_id, :version_group_id, :level_learned_at, :learn_method])
     |> validate_number(:level_learned_at,
-         greater_than_or_equal_to: 0,
-         less_than_or_equal_to: 100,
-         message: "must be between 0 and 100 (0 for evolution/machine)")
+      greater_than_or_equal_to: 0,
+      less_than_or_equal_to: 100,
+      message: "must be between 0 and 100 (0 for evolution/machine)"
+    )
     |> validate_inclusion(:learn_method, valid_learn_methods(),
-         message: "must be a valid learn method")
+      message: "must be a valid learn method"
+    )
     |> unique_constraint([:pokemon_move_id, :version_group_id],
-         name: :pokemon_move_version_details_pokemon_move_id_version_group_id_index)
+      name: :pokemon_move_version_details_pokemon_move_id_version_group_id_index
+    )
     |> foreign_key_constraint(:pokemon_move_id)
     |> foreign_key_constraint(:version_group_id)
   end

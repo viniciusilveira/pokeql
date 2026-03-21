@@ -57,9 +57,13 @@ defmodule Pokeql.Pokemon.Type do
     |> validate_required([:name, :generation_name])
     |> validate_length(:name, min: 1, max: 50)
     |> validate_format(:name, ~r/^[a-z\-]+$/, message: "must be lowercase with hyphens")
-    |> validate_format(:generation_name, ~r/^generation-[ivx]+$/, message: "must be in format 'generation-i/ii/iii/etc'")
+    |> validate_format(:generation_name, ~r/^generation-[ivx]+$/,
+      message: "must be in format 'generation-i/ii/iii/etc'"
+    )
     |> validate_inclusion(:name, valid_type_names(), message: "must be a valid Pokemon type")
-    |> validate_inclusion(:damage_class_name, valid_damage_classes(), message: "must be a valid damage class")
+    |> validate_inclusion(:damage_class_name, valid_damage_classes(),
+      message: "must be a valid damage class"
+    )
     |> unique_constraint(:name)
   end
 

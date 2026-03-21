@@ -14,7 +14,6 @@ defmodule Pokeql.Repo.Migrations.CreatePokemonTypes20260222172730 do
     create index(:pokemon_types, [:pokemon_id])
     create index(:pokemon_types, [:type_id])
 
-    create constraint(:pokemon_types, :slot_must_be_valid,
-           check: "slot >= 1 AND slot <= 2")
+    create constraint(:pokemon_types, :slot_must_be_valid, check: "slot >= 1 AND slot <= 2")
   end
 end

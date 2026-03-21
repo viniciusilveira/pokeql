@@ -40,10 +40,12 @@ defmodule Pokeql.Pokemon.BasicFunctionalityTest do
 
   describe "Pokemon helper functions" do
     test "calculate_bmi/1 calculates correctly" do
-      pokemon = build(:pokemon, height: 10, weight: 100) # 1m, 10kg
+      # 1m, 10kg
+      pokemon = build(:pokemon, height: 10, weight: 100)
       # BMI = weight(kg) / height(m)^2
       # weight: 100 hectograms = 10kg, height: 10 decimeters = 1m
-      _expected = 10.0 # 10kg / (1m)^2
+      # 10kg / (1m)^2
+      _expected = 10.0
 
       # Note: This function doesn't exist in our schema yet
       # This test would need to be implemented
@@ -52,8 +54,10 @@ defmodule Pokeql.Pokemon.BasicFunctionalityTest do
     end
 
     test "is_heavy?/1 determines heaviness correctly" do
-      light_pokemon = build(:pokemon, weight: 50)  # 5kg
-      heavy_pokemon = build(:pokemon, weight: 1000) # 100kg
+      # 5kg
+      light_pokemon = build(:pokemon, weight: 50)
+      # 100kg
+      heavy_pokemon = build(:pokemon, weight: 1000)
 
       # Note: This function doesn't exist in our schema yet
       # This test would need to be implemented

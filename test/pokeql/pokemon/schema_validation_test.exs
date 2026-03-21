@@ -10,6 +10,7 @@ defmodule Pokeql.Pokemon.SchemaValidationTest do
       refute changeset.valid?
 
       required_fields = [:name, :generation_name]
+
       for field <- required_fields do
         assert changeset.errors[field] != nil, "Expected error for #{field}"
       end
@@ -125,6 +126,7 @@ defmodule Pokeql.Pokemon.SchemaValidationTest do
       refute changeset.valid?
 
       required_fields = [:name, :height, :weight, :order, :species_id]
+
       for field <- required_fields do
         assert changeset.errors[field] != nil, "Expected error for #{field}"
       end

@@ -96,7 +96,9 @@ defmodule Pokeql.Pokemon.Species do
     |> validate_inclusion(:base_happiness, 0..255, message: "must be between 0 and 255")
     |> validate_inclusion(:hatch_counter, 0..255, message: "must be between 0 and 255")
     |> validate_format(:name, ~r/^[a-z0-9\-]+$/, message: "must be lowercase with hyphens")
-    |> validate_format(:generation_name, ~r/^generation-[ivx]+$/, message: "must be in format 'generation-i/ii/iii/etc'")
+    |> validate_format(:generation_name, ~r/^generation-[ivx]+$/,
+      message: "must be in format 'generation-i/ii/iii/etc'"
+    )
     |> unique_constraint(:name)
   end
 
