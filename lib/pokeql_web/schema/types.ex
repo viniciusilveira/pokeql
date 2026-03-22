@@ -3,6 +3,8 @@ defmodule PokeqlWeb.Schema.Types do
 
   use Absinthe.Schema.Notation
 
+  alias Pokeql.PokemonContext
+
   object :species do
     field :id, :id
     field :name, :string
@@ -62,6 +64,32 @@ defmodule PokeqlWeb.Schema.Types do
     field :short_effect, :string
   end
 
+  object :version_group do
+    field :id, :id
+    field :name, :string
+    field :generation_name, :string
+    field :sort_order, :integer
+  end
+
+  object :game_version do
+    field :id, :id
+    field :name, :string
+    field :version_group_name, :string
+  end
+
+  object :pokemon_move_detail do
+    field :level_learned_at, :integer
+    field :learn_method, :string
+
+    field :move, :move do
+      resolve(fn detail, _, _ -> {:ok, detail.pokemon_move.move} end)
+    end
+
+    field :version_group, :version_group do
+      resolve(fn detail, _, _ -> {:ok, detail.version_group} end)
+    end
+  end
+
   object :sprite do
     field :id, :id
     field :front_default, :string
@@ -94,6 +122,29 @@ defmodule PokeqlWeb.Schema.Types do
     end
 
     field :sprites, :sprite
-    field :moves, list_of(:move)
+
+    field :moves, list_of(:pokemon_move_detail) do
+      arg(:version_group, :string)
+
+      resolve(fn pokemon, args, _ ->
+        case Map.get(args, :version_group) do
+          nil ->
+            flat =
+              Enum.map(pokemon.moves, fn m ->
+                %{
+                  pokemon_move: %{move: m},
+                  version_group: nil,
+                  level_learned_at: nil,
+                  learn_method: nil
+                }
+              end)
+
+            {:ok, flat}
+
+          vg_name ->
+            {:ok, PokemonContext.get_pokemon_moves_by_version_group(pokemon.id, vg_name)}
+        end
+      end)
+    end
   end
 end

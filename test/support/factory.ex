@@ -137,11 +137,27 @@ defmodule Pokeql.Factory do
     }
   end
 
+  def pokemon_move_factory do
+    %Pokeql.Pokemon.PokemonMove{
+      pokemon: build(:pokemon),
+      move: build(:move)
+    }
+  end
+
+  def pokemon_move_version_detail_factory do
+    %Pokeql.Pokemon.PokemonMoveVersionDetail{
+      pokemon_move: build(:pokemon_move),
+      version_group: build(:version_group),
+      level_learned_at: 1,
+      learn_method: "level-up"
+    }
+  end
+
   def version_group_factory do
     %Pokeql.Pokemon.VersionGroup{
       name: sequence("version_group_name", &"version-group-#{&1}"),
       generation_name: "generation-i",
-      sort_order: sequence("version_group_sort_order", & &1 + 1)
+      sort_order: sequence("version_group_sort_order", &(&1 + 1))
     }
   end
 

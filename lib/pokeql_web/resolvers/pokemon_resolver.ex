@@ -39,4 +39,12 @@ defmodule PokeqlWeb.Resolvers.PokemonResolver do
 
     {:ok, result}
   end
+
+  def get_legendary_pokemons(_, _, _) do
+    {:ok, PokemonContext.get_legendary_pokemons()}
+  end
+
+  def get_mythical_pokemons(_, _, _) do
+    {:ok, PokemonContext.get_mythical_pokemons()}
+  end
 end
