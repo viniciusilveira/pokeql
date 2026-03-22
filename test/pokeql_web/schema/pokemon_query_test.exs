@@ -87,7 +87,7 @@ defmodule PokeqlWeb.Schema.PokemonQueryTest do
       """
 
       assert {:ok, %{errors: errors}} = Absinthe.run(query, PokeqlWeb.Schema)
-      assert length(errors) > 0
+      assert errors != []
     end
   end
 

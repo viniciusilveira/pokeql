@@ -60,9 +60,9 @@ defmodule Pokeql.PokemonFetcherTest do
       assert pokemon.height == 7
       assert pokemon.weight == 69
       assert pokemon.species.name == "bulbasaur"
-      assert length(pokemon.abilities) > 0
-      assert length(pokemon.types) > 0
-      assert length(pokemon.pokemon_stats) > 0
+      assert pokemon.abilities != []
+      assert pokemon.types != []
+      assert pokemon.pokemon_stats != []
       assert pokemon.sprites != nil
     end
 

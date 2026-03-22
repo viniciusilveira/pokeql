@@ -258,26 +258,22 @@ defmodule Pokeql.Seeder.Seeder do
         pokemon_id = Map.fetch!(pokemon_map, pokemon_raw["name"])
 
         pokemon_raw["game_indices"]
-        |> Enum.map(fn gi ->
-          version_name = gi["version"]["name"]
-          game_version_id = Map.get(game_version_map, version_name)
-
-          if game_version_id do
-            %{
-              pokemon_id: pokemon_id,
-              game_version_id: game_version_id,
-              game_index: gi["game_index"]
-            }
-          else
-            nil
-          end
-        end)
+        |> Enum.map(&build_game_index_entry(&1, pokemon_id, game_version_map))
         |> Enum.reject(&is_nil/1)
       end)
 
     insert_all_idempotent(PokemonGameIndex, game_index_entries)
 
     :ok
+  end
+
+  defp build_game_index_entry(gi, pokemon_id, game_version_map) do
+    version_name = gi["version"]["name"]
+    game_version_id = Map.get(game_version_map, version_name)
+
+    if game_version_id do
+      %{pokemon_id: pokemon_id, game_version_id: game_version_id, game_index: gi["game_index"]}
+    end
   end
 
   defp insert_all_idempotent(_schema, []), do: :ok

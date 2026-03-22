@@ -6,8 +6,13 @@ defmodule PokeqlWeb.Schema do
   import_types(PokeqlWeb.Schema.Types)
 
   alias PokeqlWeb.Resolvers.PokemonResolver
+  alias PokeqlWeb.Resolvers.ReferenceResolver
 
   query do
+    # ------------------------------------------------------------------
+    # Pokemon
+    # ------------------------------------------------------------------
+
     @desc "Get a single Pokemon by id or name"
     field :pokemon, :pokemon do
       arg(:id, :id)
@@ -24,6 +29,110 @@ defmodule PokeqlWeb.Schema do
       arg(:generation, :string)
       arg(:search, :string)
       resolve(&PokemonResolver.list_pokemons/3)
+    end
+
+    @desc "List legendary Pokemon"
+    field :legendary_pokemons, non_null(list_of(non_null(:pokemon))) do
+      resolve(&PokemonResolver.get_legendary_pokemons/3)
+    end
+
+    @desc "List mythical Pokemon"
+    field :mythical_pokemons, non_null(list_of(non_null(:pokemon))) do
+      resolve(&PokemonResolver.get_mythical_pokemons/3)
+    end
+
+    # ------------------------------------------------------------------
+    # Abilities
+    # ------------------------------------------------------------------
+
+    @desc "Get a single ability by name"
+    field :ability, :ability do
+      arg(:name, non_null(:string))
+      resolve(&ReferenceResolver.get_ability/3)
+    end
+
+    @desc "List abilities"
+    field :abilities, non_null(list_of(non_null(:ability))) do
+      arg(:limit, :integer, default_value: 100)
+      arg(:offset, :integer, default_value: 0)
+      resolve(&ReferenceResolver.list_abilities/3)
+    end
+
+    # ------------------------------------------------------------------
+    # Types
+    # ------------------------------------------------------------------
+
+    @desc "Get a single type by name"
+    field :type, :pokemon_type do
+      arg(:name, non_null(:string))
+      resolve(&ReferenceResolver.get_type/3)
+    end
+
+    @desc "List all types"
+    field :types, non_null(list_of(non_null(:pokemon_type))) do
+      resolve(&ReferenceResolver.list_types/3)
+    end
+
+    # ------------------------------------------------------------------
+    # Stats
+    # ------------------------------------------------------------------
+
+    @desc "Get a single stat by name"
+    field :stat, :stat do
+      arg(:name, non_null(:string))
+      resolve(&ReferenceResolver.get_stat/3)
+    end
+
+    @desc "List all stats"
+    field :stats, non_null(list_of(non_null(:stat))) do
+      resolve(&ReferenceResolver.list_stats/3)
+    end
+
+    # ------------------------------------------------------------------
+    # Moves
+    # ------------------------------------------------------------------
+
+    @desc "Get a single move by name"
+    field :move, :move do
+      arg(:name, non_null(:string))
+      resolve(&ReferenceResolver.get_move/3)
+    end
+
+    @desc "List moves"
+    field :moves, non_null(list_of(non_null(:move))) do
+      arg(:limit, :integer, default_value: 50)
+      arg(:offset, :integer, default_value: 0)
+      resolve(&ReferenceResolver.list_moves/3)
+    end
+
+    # ------------------------------------------------------------------
+    # Species
+    # ------------------------------------------------------------------
+
+    @desc "Get a single species by name"
+    field :species, :species do
+      arg(:name, non_null(:string))
+      resolve(&ReferenceResolver.get_species/3)
+    end
+
+    @desc "List all species"
+    field :species_list, non_null(list_of(non_null(:species))) do
+      resolve(&ReferenceResolver.list_species/3)
+    end
+
+    # ------------------------------------------------------------------
+    # Version groups
+    # ------------------------------------------------------------------
+
+    @desc "Get a single version group by name"
+    field :version_group, :version_group do
+      arg(:name, non_null(:string))
+      resolve(&ReferenceResolver.get_version_group/3)
+    end
+
+    @desc "List all version groups"
+    field :version_groups, non_null(list_of(non_null(:version_group))) do
+      resolve(&ReferenceResolver.list_version_groups/3)
     end
   end
 end

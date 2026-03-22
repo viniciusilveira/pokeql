@@ -42,27 +42,12 @@ defmodule Pokeql.PokemonContext do
         pokemon
 
       :miss ->
-        result =
-          Pokemon
-          |> where([p], p.id == ^id)
-          |> preload(^Pokemon.full_preloads())
-          |> Repo.one()
-
-        case result do
-          nil ->
-            case Pokeql.PokemonFetcher.fetch_and_persist(id) do
-              {:ok, pokemon} ->
-                Task.start(fn -> Cache.put_pokemon(pokemon) end)
-                pokemon
-
-              {:error, _} ->
-                nil
-            end
-
-          pokemon ->
-            populated = Pokemon.populate_virtual_fields(pokemon)
-            Task.start(fn -> Cache.put_pokemon(populated) end)
-            populated
+        case Pokemon
+             |> where([p], p.id == ^id)
+             |> preload(^Pokemon.full_preloads())
+             |> Repo.one() do
+          nil -> fetch_from_api(id)
+          pokemon -> populate_and_cache(pokemon)
         end
     end
   end
@@ -86,27 +71,12 @@ defmodule Pokeql.PokemonContext do
         pokemon
 
       :miss ->
-        result =
-          Pokemon
-          |> where([p], p.name == ^name)
-          |> preload(^Pokemon.full_preloads())
-          |> Repo.one()
-
-        case result do
-          nil ->
-            case Pokeql.PokemonFetcher.fetch_and_persist(name) do
-              {:ok, pokemon} ->
-                Task.start(fn -> Cache.put_pokemon(pokemon) end)
-                pokemon
-
-              {:error, _} ->
-                nil
-            end
-
-          pokemon ->
-            populated = Pokemon.populate_virtual_fields(pokemon)
-            Task.start(fn -> Cache.put_pokemon(populated) end)
-            populated
+        case Pokemon
+             |> where([p], p.name == ^name)
+             |> preload(^Pokemon.full_preloads())
+             |> Repo.one() do
+          nil -> fetch_from_api(name)
+          pokemon -> populate_and_cache(pokemon)
         end
     end
   end
@@ -164,18 +134,25 @@ defmodule Pokeql.PokemonContext do
   """
   @spec get_ability_by_name(String.t()) :: Ability.t() | nil
   def get_ability_by_name(name) do
-    Ability
-    |> where([a], a.name == ^name)
-    |> Repo.one()
+    cache_or_db(
+      fn -> Cache.get_ability(name) end,
+      fn -> Ability |> where([a], a.name == ^name) |> Repo.one() end,
+      &Cache.put_ability/1
+    )
   end
 
   @doc """
-  Lists all abilities.
+  Lists abilities with optional pagination.
   """
-  @spec list_abilities() :: [Ability.t()]
-  def list_abilities do
+  @spec list_abilities(keyword()) :: [Ability.t()]
+  def list_abilities(opts \\ []) do
+    limit = Keyword.get(opts, :limit, 100)
+    offset = Keyword.get(opts, :offset, 0)
+
     Ability
     |> order_by([a], asc: a.name)
+    |> limit(^limit)
+    |> offset(^offset)
     |> Repo.all()
   end
 
@@ -184,9 +161,11 @@ defmodule Pokeql.PokemonContext do
   """
   @spec get_type_by_name(String.t()) :: Type.t() | nil
   def get_type_by_name(name) do
-    Type
-    |> where([t], t.name == ^name)
-    |> Repo.one()
+    cache_or_db(
+      fn -> Cache.get_type(name) end,
+      fn -> Type |> where([t], t.name == ^name) |> Repo.one() end,
+      &Cache.put_type/1
+    )
   end
 
   @doc """
@@ -210,22 +189,73 @@ defmodule Pokeql.PokemonContext do
   end
 
   @doc """
-  Gets a move by name.
+  Gets a stat by name.
   """
-  @spec get_move_by_name(String.t()) :: Move.t() | nil
-  def get_move_by_name(name) do
-    Move
-    |> where([m], m.name == ^name)
+  @spec get_stat_by_name(String.t()) :: Stat.t() | nil
+  def get_stat_by_name(name) do
+    cache_or_db(
+      fn -> Cache.get_stat(name) end,
+      fn -> Stat |> where([s], s.name == ^name) |> Repo.one() end,
+      &Cache.put_stat/1
+    )
+  end
+
+  @doc """
+  Gets a species by name.
+  """
+  @spec get_species_by_name(String.t()) :: Species.t() | nil
+  def get_species_by_name(name) do
+    cache_or_db(
+      fn -> Cache.get_species(name) end,
+      fn -> Species |> where([s], s.name == ^name) |> Repo.one() end,
+      &Cache.put_species/1
+    )
+  end
+
+  @doc """
+  Lists all version groups ordered by sort_order.
+  """
+  @spec list_version_groups() :: [VersionGroup.t()]
+  def list_version_groups do
+    VersionGroup
+    |> order_by([vg], asc: vg.sort_order)
+    |> Repo.all()
+  end
+
+  @doc """
+  Gets a version group by name.
+  """
+  @spec get_version_group_by_name(String.t()) :: VersionGroup.t() | nil
+  def get_version_group_by_name(name) do
+    VersionGroup
+    |> where([vg], vg.name == ^name)
     |> Repo.one()
   end
 
   @doc """
-  Lists all moves.
+  Gets a move by name.
   """
-  @spec list_moves() :: [Move.t()]
-  def list_moves do
+  @spec get_move_by_name(String.t()) :: Move.t() | nil
+  def get_move_by_name(name) do
+    cache_or_db(
+      fn -> Cache.get_move(name) end,
+      fn -> Move |> where([m], m.name == ^name) |> Repo.one() end,
+      &Cache.put_move/1
+    )
+  end
+
+  @doc """
+  Lists moves with optional pagination.
+  """
+  @spec list_moves(keyword()) :: [Move.t()]
+  def list_moves(opts \\ []) do
+    limit = Keyword.get(opts, :limit, 50)
+    offset = Keyword.get(opts, :offset, 0)
+
     Move
     |> order_by([m], asc: m.name)
+    |> limit(^limit)
+    |> offset(^offset)
     |> Repo.all()
   end
 
@@ -368,5 +398,40 @@ defmodule Pokeql.PokemonContext do
     |> order_by([p], asc: p.order)
     |> preload([:species])
     |> Repo.all()
+  end
+
+  # =============================================================================
+  # PRIVATE HELPERS
+  # =============================================================================
+
+  defp fetch_from_api(identifier) do
+    case Pokeql.PokemonFetcher.fetch_and_persist(identifier) do
+      {:ok, pokemon} ->
+        Task.start(fn -> Cache.put_pokemon(pokemon) end)
+        pokemon
+
+      {:error, _} ->
+        nil
+    end
+  end
+
+  defp populate_and_cache(pokemon) do
+    populated = Pokemon.populate_virtual_fields(pokemon)
+    Task.start(fn -> Cache.put_pokemon(populated) end)
+    populated
+  end
+
+  defp cache_or_db(cache_get_fn, db_query_fn, cache_put_fn) do
+    case cache_get_fn.() do
+      {:ok, value} -> value
+      :miss -> db_query_fn.() |> cache_on_hit(cache_put_fn)
+    end
+  end
+
+  defp cache_on_hit(nil, _cache_put_fn), do: nil
+
+  defp cache_on_hit(value, cache_put_fn) do
+    Task.start(fn -> cache_put_fn.(value) end)
+    value
   end
 end

@@ -64,7 +64,8 @@ defmodule Pokeql.PokemonFetcher do
     %{
       pokemon: pokemon_raw,
       species: species_raw,
-      abilities: fetch_all(poke_api, :get_ability, Transformer.extract_ability_names(pokemon_raw)),
+      abilities:
+        fetch_all(poke_api, :get_ability, Transformer.extract_ability_names(pokemon_raw)),
       types: fetch_all(poke_api, :get_type, Transformer.extract_type_names(pokemon_raw)),
       stats: fetch_all(poke_api, :get_stat, Transformer.extract_stat_names(pokemon_raw)),
       moves: fetch_all(poke_api, :get_move, Transformer.extract_move_names(pokemon_raw)),
@@ -86,8 +87,16 @@ defmodule Pokeql.PokemonFetcher do
   # Persisting
 
   defp persist_reference_tables(raw) do
-    insert_all_idempotent(VersionGroup, Enum.map(raw.version_groups, &Transformer.version_group_attrs/1))
-    insert_all_idempotent(GameVersion, Enum.map(raw.game_versions, &Transformer.game_version_attrs/1))
+    insert_all_idempotent(
+      VersionGroup,
+      Enum.map(raw.version_groups, &Transformer.version_group_attrs/1)
+    )
+
+    insert_all_idempotent(
+      GameVersion,
+      Enum.map(raw.game_versions, &Transformer.game_version_attrs/1)
+    )
+
     insert_all_idempotent(Species, [Transformer.species_attrs(raw.species)])
     insert_all_idempotent(Ability, Enum.map(raw.abilities, &Transformer.ability_attrs/1))
     insert_all_idempotent(Type, Enum.map(raw.types, &Transformer.type_attrs/1))
@@ -118,19 +127,30 @@ defmodule Pokeql.PokemonFetcher do
   end
 
   defp persist_junction_tables(pokemon_raw, pokemon_id, id_maps) do
-    insert_all_idempotent(PokemonAbility, ability_entries(pokemon_raw, pokemon_id, id_maps.ability))
+    insert_all_idempotent(
+      PokemonAbility,
+      ability_entries(pokemon_raw, pokemon_id, id_maps.ability)
+    )
+
     insert_all_idempotent(PokemonType, type_entries(pokemon_raw, pokemon_id, id_maps.type))
     insert_all_idempotent(PokemonStat, stat_entries(pokemon_raw, pokemon_id, id_maps.stat))
     insert_all_idempotent(PokemonMove, move_entries(pokemon_raw, pokemon_id, id_maps.move))
     insert_all_idempotent(Sprite, [sprite_entry(pokemon_raw, pokemon_id)])
-    insert_all_idempotent(PokemonGameIndex, game_index_entries(pokemon_raw, pokemon_id, id_maps.game_version))
+
+    insert_all_idempotent(
+      PokemonGameIndex,
+      game_index_entries(pokemon_raw, pokemon_id, id_maps.game_version)
+    )
   end
 
   defp ability_entries(pokemon_raw, pokemon_id, ability_map) do
     Transformer.pokemon_abilities_attrs(pokemon_raw)
     |> Enum.map(fn attrs ->
       ability_id = Map.fetch!(ability_map, attrs.ability_name)
-      attrs |> Map.delete(:ability_name) |> Map.merge(%{pokemon_id: pokemon_id, ability_id: ability_id})
+
+      attrs
+      |> Map.delete(:ability_name)
+      |> Map.merge(%{pokemon_id: pokemon_id, ability_id: ability_id})
     end)
   end
 
@@ -166,8 +186,17 @@ defmodule Pokeql.PokemonFetcher do
     pokemon_raw["game_indices"]
     |> Enum.flat_map(fn gi ->
       case Map.get(game_version_map, gi["version"]["name"]) do
-        nil -> []
-        game_version_id -> [%{pokemon_id: pokemon_id, game_version_id: game_version_id, game_index: gi["game_index"]}]
+        nil ->
+          []
+
+        game_version_id ->
+          [
+            %{
+              pokemon_id: pokemon_id,
+              game_version_id: game_version_id,
+              game_index: gi["game_index"]
+            }
+          ]
       end
     end)
   end
@@ -193,7 +222,10 @@ defmodule Pokeql.PokemonFetcher do
 
   defp insert_all_idempotent(schema, entries) do
     now = DateTime.utc_now() |> DateTime.truncate(:microsecond)
-    entries_with_timestamps = Enum.map(entries, &Map.merge(&1, %{inserted_at: now, updated_at: now}))
+
+    entries_with_timestamps =
+      Enum.map(entries, &Map.merge(&1, %{inserted_at: now, updated_at: now}))
+
     Repo.insert_all(schema, entries_with_timestamps, on_conflict: :nothing)
     :ok
   end
