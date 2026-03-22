@@ -338,7 +338,7 @@ defmodule PokeqlWeb.Schema.ReferenceQueryTest do
       assert {:ok, %{data: %{"legendaryPokemons" => results}}} =
                Absinthe.run(query, PokeqlWeb.Schema)
 
-      assert length(results) >= 1
+      assert results != []
       assert Enum.all?(results, fn p -> p["species"]["isLegendary"] == true end)
     end
   end
@@ -355,7 +355,7 @@ defmodule PokeqlWeb.Schema.ReferenceQueryTest do
       assert {:ok, %{data: %{"mythicalPokemons" => results}}} =
                Absinthe.run(query, PokeqlWeb.Schema)
 
-      assert length(results) >= 1
+      assert results != []
       assert Enum.all?(results, fn p -> p["species"]["isMythical"] == true end)
     end
   end

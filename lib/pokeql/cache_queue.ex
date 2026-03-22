@@ -1,4 +1,6 @@
 defmodule Pokeql.CacheQueue do
+  @moduledoc "GenServer that initialises the ETS cache table and pre-warms static reference data on startup."
+
   use GenServer
 
   alias Pokeql.Cache
@@ -19,17 +21,24 @@ defmodule Pokeql.CacheQueue do
 
   def init(state) do
     {:ok, _} = Cache.create()
-    send(self(), :prewarm)
+
+    if Application.get_env(:pokeql, :cache_prewarm_on_start, true) do
+      send(self(), :prewarm)
+    end
+
     {:ok, state}
   end
 
   def handle_info(:prewarm, state) do
     Task.start(fn ->
-      PokemonContext.list_types()
-      |> Enum.each(&Cache.put_type/1)
-
-      PokemonContext.list_stats()
-      |> Enum.each(&Cache.put_stat/1)
+      try do
+        PokemonContext.list_types() |> Enum.each(&Cache.put_type/1)
+        PokemonContext.list_stats() |> Enum.each(&Cache.put_stat/1)
+      rescue
+        _ -> :ok
+      catch
+        :exit, _ -> :ok
+      end
     end)
 
     {:noreply, state}

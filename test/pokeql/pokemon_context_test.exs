@@ -49,7 +49,7 @@ defmodule Pokeql.PokemonContextTest do
       pokemon = insert(:pokemon)
 
       result = PokemonContext.list_pokemons()
-      assert length(result) >= 1
+      assert result != []
       assert Enum.any?(result, fn p -> p.id == pokemon.id end)
     end
 
@@ -70,7 +70,7 @@ defmodule Pokeql.PokemonContextTest do
     test "sorts by specified field" do
       # Create pokemon with specific orders
       pokemon1 = insert(:pokemon, order: 10)
-      pokemon2 = insert(:pokemon, order: 5)
+      _pokemon2 = insert(:pokemon, order: 5)
 
       result = PokemonContext.list_pokemons(order_by: :order)
       assert length(result) >= 2
@@ -86,7 +86,7 @@ defmodule Pokeql.PokemonContextTest do
       _pokemon = insert(:pokemon, species: gen_i_species)
 
       result = PokemonContext.list_pokemons(generation: "generation-i")
-      assert length(result) >= 1
+      assert result != []
 
       # Test with generation that doesn't exist in our test data
       result = PokemonContext.list_pokemons(generation: "generation-ix")
@@ -99,7 +99,7 @@ defmodule Pokeql.PokemonContextTest do
       pokemon = insert(:pokemon, name: "bulbasaur")
 
       result = PokemonContext.search_pokemons("bulba")
-      assert length(result) >= 1
+      assert result != []
       assert Enum.any?(result, fn p -> p.id == pokemon.id end)
     end
 
@@ -107,7 +107,7 @@ defmodule Pokeql.PokemonContextTest do
       pokemon = insert(:pokemon, name: "bulbasaur")
 
       result = PokemonContext.search_pokemons("BULBA")
-      assert length(result) >= 1
+      assert result != []
       assert Enum.any?(result, fn p -> p.id == pokemon.id end)
     end
 
@@ -143,7 +143,7 @@ defmodule Pokeql.PokemonContextTest do
     test "cache hit: returns cached pokemon without DB query" do
       # Put a pokemon struct directly in cache (not persisted to DB)
       cached_pokemon = %Pokemon{
-        id: 99999,
+        id: 99_999,
         name: "cache-only-mon",
         height: 5,
         weight: 50,
@@ -153,9 +153,9 @@ defmodule Pokeql.PokemonContextTest do
 
       Cache.put_pokemon(cached_pokemon)
 
-      result = PokemonContext.get_pokemon(99999)
+      result = PokemonContext.get_pokemon(99_999)
 
-      assert result.id == 99999
+      assert result.id == 99_999
       assert result.name == "cache-only-mon"
     end
 
@@ -182,7 +182,7 @@ defmodule Pokeql.PokemonContextTest do
   describe "cache read-through for get_pokemon_by_name/1" do
     test "cache hit: returns cached pokemon without DB query" do
       cached_pokemon = %Pokemon{
-        id: 99998,
+        id: 99_998,
         name: "cache-name-mon",
         height: 5,
         weight: 50,
@@ -194,7 +194,7 @@ defmodule Pokeql.PokemonContextTest do
 
       result = PokemonContext.get_pokemon_by_name("cache-name-mon")
 
-      assert result.id == 99998
+      assert result.id == 99_998
       assert result.name == "cache-name-mon"
     end
 
@@ -320,7 +320,7 @@ defmodule Pokeql.PokemonContextTest do
   describe "cache read-through for get_ability_by_name/1" do
     test "cache hit: returns cached ability without DB query" do
       cached = %Pokeql.Pokemon.Ability{
-        id: 99999,
+        id: 99_999,
         name: "cache-only-ability",
         generation_name: "generation-i",
         is_main_series: true,
@@ -330,7 +330,7 @@ defmodule Pokeql.PokemonContextTest do
       Cache.put_ability(cached)
 
       result = PokemonContext.get_ability_by_name("cache-only-ability")
-      assert result.id == 99999
+      assert result.id == 99_999
     end
 
     test "cache miss: queries DB and populates cache (async)" do
@@ -355,7 +355,7 @@ defmodule Pokeql.PokemonContextTest do
   describe "cache read-through for get_move_by_name/1" do
     test "cache hit: returns cached move without DB query" do
       cached = %Pokeql.Pokemon.Move{
-        id: 99999,
+        id: 99_999,
         name: "cache-only-move",
         generation_name: "generation-i",
         type_name: "normal",
@@ -370,7 +370,7 @@ defmodule Pokeql.PokemonContextTest do
       Cache.put_move(cached)
 
       result = PokemonContext.get_move_by_name("cache-only-move")
-      assert result.id == 99999
+      assert result.id == 99_999
     end
 
     test "cache miss: queries DB and populates cache (async)" do
@@ -395,7 +395,7 @@ defmodule Pokeql.PokemonContextTest do
   describe "cache read-through for get_type_by_name/1" do
     test "cache hit: returns cached type without DB query" do
       cached = %Pokeql.Pokemon.Type{
-        id: 99999,
+        id: 99_999,
         name: "cache-only-type",
         generation_name: "generation-i",
         damage_class_name: "special"
@@ -404,7 +404,7 @@ defmodule Pokeql.PokemonContextTest do
       Cache.put_type(cached)
 
       result = PokemonContext.get_type_by_name("cache-only-type")
-      assert result.id == 99999
+      assert result.id == 99_999
     end
 
     test "cache miss: queries DB and populates cache (async)" do
@@ -429,7 +429,7 @@ defmodule Pokeql.PokemonContextTest do
   describe "cache read-through for get_stat_by_name/1" do
     test "cache hit: returns cached stat without DB query" do
       cached = %Pokeql.Pokemon.Stat{
-        id: 99999,
+        id: 99_999,
         name: "cache-only-stat",
         game_index: 99,
         is_battle_only: false
@@ -438,7 +438,7 @@ defmodule Pokeql.PokemonContextTest do
       Cache.put_stat(cached)
 
       result = PokemonContext.get_stat_by_name("cache-only-stat")
-      assert result.id == 99999
+      assert result.id == 99_999
     end
 
     test "cache miss: queries DB and populates cache (async)" do
@@ -463,7 +463,7 @@ defmodule Pokeql.PokemonContextTest do
   describe "cache read-through for get_species_by_name/1" do
     test "cache hit: returns cached species without DB query" do
       cached = %Pokeql.Pokemon.Species{
-        id: 99999,
+        id: 99_999,
         name: "cache-only-species",
         generation_name: "generation-i",
         color_name: "red",
@@ -482,7 +482,7 @@ defmodule Pokeql.PokemonContextTest do
       Cache.put_species(cached)
 
       result = PokemonContext.get_species_by_name("cache-only-species")
-      assert result.id == 99999
+      assert result.id == 99_999
     end
 
     test "cache miss: queries DB and populates cache (async)" do
@@ -511,7 +511,7 @@ defmodule Pokeql.PokemonContextTest do
       _legendary_pokemon = insert(:pokemon, species: legendary_species)
 
       result = PokemonContext.get_legendary_pokemons()
-      assert length(result) >= 1
+      assert result != []
       assert Enum.all?(result, fn p -> p.species.is_legendary end)
     end
 
@@ -521,7 +521,7 @@ defmodule Pokeql.PokemonContextTest do
       _mythical_pokemon = insert(:pokemon, species: mythical_species)
 
       result = PokemonContext.get_mythical_pokemons()
-      assert length(result) >= 1
+      assert result != []
       assert Enum.all?(result, fn p -> p.species.is_mythical end)
     end
   end

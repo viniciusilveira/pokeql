@@ -23,6 +23,7 @@ config :pokeql, PokeqlWeb.Endpoint,
   server: false
 
 # Print only warnings and errors during test
-config :logger, level: :warn
+config :logger, level: :warning
 
 config :pokeql, :poke_api, Pokeql.PokeAPIMock
+config :pokeql, :cache_prewarm_on_start, false

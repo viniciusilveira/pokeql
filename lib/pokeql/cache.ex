@@ -1,4 +1,6 @@
 defmodule Pokeql.Cache do
+  @moduledoc "ETS-backed in-memory cache for Pokemon and reference entities."
+
   alias Pokeql.Pokemon
   alias Pokeql.Pokemon.Ability
   alias Pokeql.Pokemon.Move

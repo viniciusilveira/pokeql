@@ -14,7 +14,7 @@ defmodule Pokeql.CacheTest do
     :ok
   end
 
-  defp build_pokemon(attrs \\ []) do
+  defp build_pokemon(attrs) do
     defaults = %Pokemon{
       id: 1,
       name: "bulbasaur",

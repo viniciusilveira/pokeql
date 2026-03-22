@@ -2,7 +2,7 @@ defmodule Pokeql.Pokemon.SchemaValidationTest do
   use Pokeql.DataCase
 
   alias Pokeql.Pokemon
-  alias Pokeql.Pokemon.{Species, PokemonAbility}
+  alias Pokeql.Pokemon.Species
 
   describe "Species changeset validations" do
     test "validates required fields" do
