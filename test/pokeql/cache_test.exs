@@ -146,7 +146,13 @@ defmodule Pokeql.CacheTest do
 
   describe "put_ability/1 and get_ability/1" do
     test "stores and retrieves an ability by name" do
-      ability = %Ability{id: 1, name: "overgrow", generation_name: "generation-iii", is_main_series: true, short_effect: "Strengthens grass moves."}
+      ability = %Ability{
+        id: 1,
+        name: "overgrow",
+        generation_name: "generation-iii",
+        is_main_series: true,
+        short_effect: "Strengthens grass moves."
+      }
 
       :ok = Cache.put_ability(ability)
 
@@ -160,8 +166,21 @@ defmodule Pokeql.CacheTest do
     end
 
     test "overwrites existing entry on second put" do
-      ability = %Ability{id: 1, name: "overgrow", generation_name: "generation-iii", is_main_series: true, short_effect: "old"}
-      updated = %Ability{id: 1, name: "overgrow", generation_name: "generation-iii", is_main_series: true, short_effect: "new"}
+      ability = %Ability{
+        id: 1,
+        name: "overgrow",
+        generation_name: "generation-iii",
+        is_main_series: true,
+        short_effect: "old"
+      }
+
+      updated = %Ability{
+        id: 1,
+        name: "overgrow",
+        generation_name: "generation-iii",
+        is_main_series: true,
+        short_effect: "new"
+      }
 
       Cache.put_ability(ability)
       Cache.put_ability(updated)
@@ -173,7 +192,18 @@ defmodule Pokeql.CacheTest do
 
   describe "put_move/1 and get_move/1" do
     test "stores and retrieves a move by name" do
-      move = %Move{id: 1, name: "tackle", generation_name: "generation-i", type_name: "normal", damage_class_name: "physical", power: 40, pp: 35, accuracy: 100, priority: 0, short_effect: "Normal damage."}
+      move = %Move{
+        id: 1,
+        name: "tackle",
+        generation_name: "generation-i",
+        type_name: "normal",
+        damage_class_name: "physical",
+        power: 40,
+        pp: 35,
+        accuracy: 100,
+        priority: 0,
+        short_effect: "Normal damage."
+      }
 
       :ok = Cache.put_move(move)
 
@@ -189,7 +219,12 @@ defmodule Pokeql.CacheTest do
 
   describe "put_type/1 and get_type/1" do
     test "stores and retrieves a type by name" do
-      type = %Type{id: 1, name: "fire", generation_name: "generation-i", damage_class_name: "special"}
+      type = %Type{
+        id: 1,
+        name: "fire",
+        generation_name: "generation-i",
+        damage_class_name: "special"
+      }
 
       :ok = Cache.put_type(type)
 
@@ -221,7 +256,22 @@ defmodule Pokeql.CacheTest do
 
   describe "put_species/1 and get_species/1" do
     test "stores and retrieves a species by name" do
-      species = %Species{id: 1, name: "bulbasaur", generation_name: "generation-i", color_name: "green", shape_name: "quadruped", growth_rate_name: "medium-slow", gender_rate: 1, capture_rate: 45, base_happiness: 50, is_baby: false, hatch_counter: 20, has_gender_differences: false, is_legendary: false, is_mythical: false}
+      species = %Species{
+        id: 1,
+        name: "bulbasaur",
+        generation_name: "generation-i",
+        color_name: "green",
+        shape_name: "quadruped",
+        growth_rate_name: "medium-slow",
+        gender_rate: 1,
+        capture_rate: 45,
+        base_happiness: 50,
+        is_baby: false,
+        hatch_counter: 20,
+        has_gender_differences: false,
+        is_legendary: false,
+        is_mythical: false
+      }
 
       :ok = Cache.put_species(species)
 

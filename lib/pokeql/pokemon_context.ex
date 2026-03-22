@@ -172,8 +172,12 @@ defmodule Pokeql.PokemonContext do
         result = Ability |> where([a], a.name == ^name) |> Repo.one()
 
         case result do
-          nil -> nil
-          ability -> Task.start(fn -> Cache.put_ability(ability) end); ability
+          nil ->
+            nil
+
+          ability ->
+            Task.start(fn -> Cache.put_ability(ability) end)
+            ability
         end
     end
   end
@@ -206,8 +210,12 @@ defmodule Pokeql.PokemonContext do
         result = Type |> where([t], t.name == ^name) |> Repo.one()
 
         case result do
-          nil -> nil
-          type -> Task.start(fn -> Cache.put_type(type) end); type
+          nil ->
+            nil
+
+          type ->
+            Task.start(fn -> Cache.put_type(type) end)
+            type
         end
     end
   end
@@ -245,8 +253,12 @@ defmodule Pokeql.PokemonContext do
         result = Stat |> where([s], s.name == ^name) |> Repo.one()
 
         case result do
-          nil -> nil
-          stat -> Task.start(fn -> Cache.put_stat(stat) end); stat
+          nil ->
+            nil
+
+          stat ->
+            Task.start(fn -> Cache.put_stat(stat) end)
+            stat
         end
     end
   end
@@ -264,8 +276,12 @@ defmodule Pokeql.PokemonContext do
         result = Species |> where([s], s.name == ^name) |> Repo.one()
 
         case result do
-          nil -> nil
-          species -> Task.start(fn -> Cache.put_species(species) end); species
+          nil ->
+            nil
+
+          species ->
+            Task.start(fn -> Cache.put_species(species) end)
+            species
         end
     end
   end
@@ -303,8 +319,12 @@ defmodule Pokeql.PokemonContext do
         result = Move |> where([m], m.name == ^name) |> Repo.one()
 
         case result do
-          nil -> nil
-          move -> Task.start(fn -> Cache.put_move(move) end); move
+          nil ->
+            nil
+
+          move ->
+            Task.start(fn -> Cache.put_move(move) end)
+            move
         end
     end
   end

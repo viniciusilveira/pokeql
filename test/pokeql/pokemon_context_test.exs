@@ -319,7 +319,14 @@ defmodule Pokeql.PokemonContextTest do
 
   describe "cache read-through for get_ability_by_name/1" do
     test "cache hit: returns cached ability without DB query" do
-      cached = %Pokeql.Pokemon.Ability{id: 99999, name: "cache-only-ability", generation_name: "generation-i", is_main_series: true, short_effect: "test"}
+      cached = %Pokeql.Pokemon.Ability{
+        id: 99999,
+        name: "cache-only-ability",
+        generation_name: "generation-i",
+        is_main_series: true,
+        short_effect: "test"
+      }
+
       Cache.put_ability(cached)
 
       result = PokemonContext.get_ability_by_name("cache-only-ability")
@@ -347,7 +354,19 @@ defmodule Pokeql.PokemonContextTest do
 
   describe "cache read-through for get_move_by_name/1" do
     test "cache hit: returns cached move without DB query" do
-      cached = %Pokeql.Pokemon.Move{id: 99999, name: "cache-only-move", generation_name: "generation-i", type_name: "normal", damage_class_name: "physical", power: 40, pp: 35, accuracy: 100, priority: 0, short_effect: "test"}
+      cached = %Pokeql.Pokemon.Move{
+        id: 99999,
+        name: "cache-only-move",
+        generation_name: "generation-i",
+        type_name: "normal",
+        damage_class_name: "physical",
+        power: 40,
+        pp: 35,
+        accuracy: 100,
+        priority: 0,
+        short_effect: "test"
+      }
+
       Cache.put_move(cached)
 
       result = PokemonContext.get_move_by_name("cache-only-move")
@@ -375,7 +394,13 @@ defmodule Pokeql.PokemonContextTest do
 
   describe "cache read-through for get_type_by_name/1" do
     test "cache hit: returns cached type without DB query" do
-      cached = %Pokeql.Pokemon.Type{id: 99999, name: "cache-only-type", generation_name: "generation-i", damage_class_name: "special"}
+      cached = %Pokeql.Pokemon.Type{
+        id: 99999,
+        name: "cache-only-type",
+        generation_name: "generation-i",
+        damage_class_name: "special"
+      }
+
       Cache.put_type(cached)
 
       result = PokemonContext.get_type_by_name("cache-only-type")
@@ -403,7 +428,13 @@ defmodule Pokeql.PokemonContextTest do
 
   describe "cache read-through for get_stat_by_name/1" do
     test "cache hit: returns cached stat without DB query" do
-      cached = %Pokeql.Pokemon.Stat{id: 99999, name: "cache-only-stat", game_index: 99, is_battle_only: false}
+      cached = %Pokeql.Pokemon.Stat{
+        id: 99999,
+        name: "cache-only-stat",
+        game_index: 99,
+        is_battle_only: false
+      }
+
       Cache.put_stat(cached)
 
       result = PokemonContext.get_stat_by_name("cache-only-stat")
@@ -431,7 +462,23 @@ defmodule Pokeql.PokemonContextTest do
 
   describe "cache read-through for get_species_by_name/1" do
     test "cache hit: returns cached species without DB query" do
-      cached = %Pokeql.Pokemon.Species{id: 99999, name: "cache-only-species", generation_name: "generation-i", color_name: "red", shape_name: "ball", growth_rate_name: "slow", gender_rate: 1, capture_rate: 45, base_happiness: 50, is_baby: false, hatch_counter: 20, has_gender_differences: false, is_legendary: false, is_mythical: false}
+      cached = %Pokeql.Pokemon.Species{
+        id: 99999,
+        name: "cache-only-species",
+        generation_name: "generation-i",
+        color_name: "red",
+        shape_name: "ball",
+        growth_rate_name: "slow",
+        gender_rate: 1,
+        capture_rate: 45,
+        base_happiness: 50,
+        is_baby: false,
+        hatch_counter: 20,
+        has_gender_differences: false,
+        is_legendary: false,
+        is_mythical: false
+      }
+
       Cache.put_species(cached)
 
       result = PokemonContext.get_species_by_name("cache-only-species")
