@@ -164,9 +164,18 @@ defmodule Pokeql.PokemonContext do
   """
   @spec get_ability_by_name(String.t()) :: Ability.t() | nil
   def get_ability_by_name(name) do
-    Ability
-    |> where([a], a.name == ^name)
-    |> Repo.one()
+    case Cache.get_ability(name) do
+      {:ok, ability} ->
+        ability
+
+      :miss ->
+        result = Ability |> where([a], a.name == ^name) |> Repo.one()
+
+        case result do
+          nil -> nil
+          ability -> Task.start(fn -> Cache.put_ability(ability) end); ability
+        end
+    end
   end
 
   @doc """
@@ -189,9 +198,18 @@ defmodule Pokeql.PokemonContext do
   """
   @spec get_type_by_name(String.t()) :: Type.t() | nil
   def get_type_by_name(name) do
-    Type
-    |> where([t], t.name == ^name)
-    |> Repo.one()
+    case Cache.get_type(name) do
+      {:ok, type} ->
+        type
+
+      :miss ->
+        result = Type |> where([t], t.name == ^name) |> Repo.one()
+
+        case result do
+          nil -> nil
+          type -> Task.start(fn -> Cache.put_type(type) end); type
+        end
+    end
   end
 
   @doc """
@@ -219,9 +237,18 @@ defmodule Pokeql.PokemonContext do
   """
   @spec get_stat_by_name(String.t()) :: Stat.t() | nil
   def get_stat_by_name(name) do
-    Stat
-    |> where([s], s.name == ^name)
-    |> Repo.one()
+    case Cache.get_stat(name) do
+      {:ok, stat} ->
+        stat
+
+      :miss ->
+        result = Stat |> where([s], s.name == ^name) |> Repo.one()
+
+        case result do
+          nil -> nil
+          stat -> Task.start(fn -> Cache.put_stat(stat) end); stat
+        end
+    end
   end
 
   @doc """
@@ -229,9 +256,18 @@ defmodule Pokeql.PokemonContext do
   """
   @spec get_species_by_name(String.t()) :: Species.t() | nil
   def get_species_by_name(name) do
-    Species
-    |> where([s], s.name == ^name)
-    |> Repo.one()
+    case Cache.get_species(name) do
+      {:ok, species} ->
+        species
+
+      :miss ->
+        result = Species |> where([s], s.name == ^name) |> Repo.one()
+
+        case result do
+          nil -> nil
+          species -> Task.start(fn -> Cache.put_species(species) end); species
+        end
+    end
   end
 
   @doc """
@@ -259,9 +295,18 @@ defmodule Pokeql.PokemonContext do
   """
   @spec get_move_by_name(String.t()) :: Move.t() | nil
   def get_move_by_name(name) do
-    Move
-    |> where([m], m.name == ^name)
-    |> Repo.one()
+    case Cache.get_move(name) do
+      {:ok, move} ->
+        move
+
+      :miss ->
+        result = Move |> where([m], m.name == ^name) |> Repo.one()
+
+        case result do
+          nil -> nil
+          move -> Task.start(fn -> Cache.put_move(move) end); move
+        end
+    end
   end
 
   @doc """

@@ -317,6 +317,146 @@ defmodule Pokeql.PokemonContextTest do
     end
   end
 
+  describe "cache read-through for get_ability_by_name/1" do
+    test "cache hit: returns cached ability without DB query" do
+      cached = %Pokeql.Pokemon.Ability{id: 99999, name: "cache-only-ability", generation_name: "generation-i", is_main_series: true, short_effect: "test"}
+      Cache.put_ability(cached)
+
+      result = PokemonContext.get_ability_by_name("cache-only-ability")
+      assert result.id == 99999
+    end
+
+    test "cache miss: queries DB and populates cache (async)" do
+      ability = insert(:ability, name: "overgrow")
+
+      assert :miss = Cache.get_ability("overgrow")
+
+      result = PokemonContext.get_ability_by_name("overgrow")
+      assert result.id == ability.id
+
+      Process.sleep(50)
+      assert {:ok, cached} = Cache.get_ability("overgrow")
+      assert cached.id == ability.id
+    end
+
+    test "returns nil for unknown ability without populating cache" do
+      assert PokemonContext.get_ability_by_name("nonexistent-ability") == nil
+      assert :miss = Cache.get_ability("nonexistent-ability")
+    end
+  end
+
+  describe "cache read-through for get_move_by_name/1" do
+    test "cache hit: returns cached move without DB query" do
+      cached = %Pokeql.Pokemon.Move{id: 99999, name: "cache-only-move", generation_name: "generation-i", type_name: "normal", damage_class_name: "physical", power: 40, pp: 35, accuracy: 100, priority: 0, short_effect: "test"}
+      Cache.put_move(cached)
+
+      result = PokemonContext.get_move_by_name("cache-only-move")
+      assert result.id == 99999
+    end
+
+    test "cache miss: queries DB and populates cache (async)" do
+      move = insert(:move, name: "tackle")
+
+      assert :miss = Cache.get_move("tackle")
+
+      result = PokemonContext.get_move_by_name("tackle")
+      assert result.id == move.id
+
+      Process.sleep(50)
+      assert {:ok, cached} = Cache.get_move("tackle")
+      assert cached.id == move.id
+    end
+
+    test "returns nil for unknown move without populating cache" do
+      assert PokemonContext.get_move_by_name("nonexistent-move") == nil
+      assert :miss = Cache.get_move("nonexistent-move")
+    end
+  end
+
+  describe "cache read-through for get_type_by_name/1" do
+    test "cache hit: returns cached type without DB query" do
+      cached = %Pokeql.Pokemon.Type{id: 99999, name: "cache-only-type", generation_name: "generation-i", damage_class_name: "special"}
+      Cache.put_type(cached)
+
+      result = PokemonContext.get_type_by_name("cache-only-type")
+      assert result.id == 99999
+    end
+
+    test "cache miss: queries DB and populates cache (async)" do
+      type = insert(:type, name: "fire")
+
+      assert :miss = Cache.get_type("fire")
+
+      result = PokemonContext.get_type_by_name("fire")
+      assert result.id == type.id
+
+      Process.sleep(50)
+      assert {:ok, cached} = Cache.get_type("fire")
+      assert cached.id == type.id
+    end
+
+    test "returns nil for unknown type without populating cache" do
+      assert PokemonContext.get_type_by_name("nonexistent-type") == nil
+      assert :miss = Cache.get_type("nonexistent-type")
+    end
+  end
+
+  describe "cache read-through for get_stat_by_name/1" do
+    test "cache hit: returns cached stat without DB query" do
+      cached = %Pokeql.Pokemon.Stat{id: 99999, name: "cache-only-stat", game_index: 99, is_battle_only: false}
+      Cache.put_stat(cached)
+
+      result = PokemonContext.get_stat_by_name("cache-only-stat")
+      assert result.id == 99999
+    end
+
+    test "cache miss: queries DB and populates cache (async)" do
+      stat = insert(:stat, name: "hp")
+
+      assert :miss = Cache.get_stat("hp")
+
+      result = PokemonContext.get_stat_by_name("hp")
+      assert result.id == stat.id
+
+      Process.sleep(50)
+      assert {:ok, cached} = Cache.get_stat("hp")
+      assert cached.id == stat.id
+    end
+
+    test "returns nil for unknown stat without populating cache" do
+      assert PokemonContext.get_stat_by_name("nonexistent-stat-xyz") == nil
+      assert :miss = Cache.get_stat("nonexistent-stat-xyz")
+    end
+  end
+
+  describe "cache read-through for get_species_by_name/1" do
+    test "cache hit: returns cached species without DB query" do
+      cached = %Pokeql.Pokemon.Species{id: 99999, name: "cache-only-species", generation_name: "generation-i", color_name: "red", shape_name: "ball", growth_rate_name: "slow", gender_rate: 1, capture_rate: 45, base_happiness: 50, is_baby: false, hatch_counter: 20, has_gender_differences: false, is_legendary: false, is_mythical: false}
+      Cache.put_species(cached)
+
+      result = PokemonContext.get_species_by_name("cache-only-species")
+      assert result.id == 99999
+    end
+
+    test "cache miss: queries DB and populates cache (async)" do
+      species = insert(:species, name: "bulbasaur")
+
+      assert :miss = Cache.get_species("bulbasaur")
+
+      result = PokemonContext.get_species_by_name("bulbasaur")
+      assert result.id == species.id
+
+      Process.sleep(50)
+      assert {:ok, cached} = Cache.get_species("bulbasaur")
+      assert cached.id == species.id
+    end
+
+    test "returns nil for unknown species without populating cache" do
+      assert PokemonContext.get_species_by_name("nonexistent-species-xyz") == nil
+      assert :miss = Cache.get_species("nonexistent-species-xyz")
+    end
+  end
+
   describe "complex queries" do
     test "get_legendary_pokemons/0" do
       # Create legendary species and pokemon
