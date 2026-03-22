@@ -218,6 +218,105 @@ defmodule Pokeql.PokemonContextTest do
     end
   end
 
+  describe "get_stat_by_name/1" do
+    test "returns stat by name" do
+      stat = insert(:stat, name: "hp")
+      result = PokemonContext.get_stat_by_name("hp")
+      assert result.id == stat.id
+      assert result.name == "hp"
+    end
+
+    test "returns nil for unknown stat" do
+      assert PokemonContext.get_stat_by_name("nonexistent-stat") == nil
+    end
+  end
+
+  describe "get_species_by_name/1" do
+    test "returns species by name" do
+      species = insert(:species, name: "bulbasaur")
+      result = PokemonContext.get_species_by_name("bulbasaur")
+      assert result.id == species.id
+      assert result.name == "bulbasaur"
+    end
+
+    test "returns nil for unknown species" do
+      assert PokemonContext.get_species_by_name("nonexistent-species") == nil
+    end
+  end
+
+  describe "list_version_groups/0" do
+    test "returns all version groups ordered by sort_order" do
+      vg1 = insert(:version_group, sort_order: 2)
+      vg2 = insert(:version_group, sort_order: 1)
+
+      result = PokemonContext.list_version_groups()
+      assert length(result) >= 2
+
+      orders = Enum.map(result, & &1.sort_order)
+      assert orders == Enum.sort(orders)
+
+      ids = Enum.map(result, & &1.id)
+      assert vg1.id in ids
+      assert vg2.id in ids
+    end
+  end
+
+  describe "get_version_group_by_name/1" do
+    test "returns version group by name" do
+      vg = insert(:version_group, name: "red-blue")
+      result = PokemonContext.get_version_group_by_name("red-blue")
+      assert result.id == vg.id
+    end
+
+    test "returns nil for unknown version group" do
+      assert PokemonContext.get_version_group_by_name("nonexistent-vg") == nil
+    end
+  end
+
+  describe "list_abilities/1 with pagination" do
+    test "respects limit option" do
+      insert_list(5, :ability)
+      result = PokemonContext.list_abilities(limit: 2)
+      assert length(result) == 2
+    end
+
+    test "respects offset option" do
+      insert_list(4, :ability)
+      all = PokemonContext.list_abilities(limit: 100)
+      paginated = PokemonContext.list_abilities(limit: 2, offset: 2)
+      assert length(paginated) == 2
+      refute Enum.at(paginated, 0).id == Enum.at(all, 0).id
+    end
+
+    test "defaults work (no args)" do
+      insert_list(3, :ability)
+      result = PokemonContext.list_abilities()
+      assert length(result) >= 3
+    end
+  end
+
+  describe "list_moves/1 with pagination" do
+    test "respects limit option" do
+      insert_list(5, :move)
+      result = PokemonContext.list_moves(limit: 2)
+      assert length(result) == 2
+    end
+
+    test "respects offset option" do
+      insert_list(4, :move)
+      all = PokemonContext.list_moves(limit: 100)
+      paginated = PokemonContext.list_moves(limit: 2, offset: 2)
+      assert length(paginated) == 2
+      refute Enum.at(paginated, 0).id == Enum.at(all, 0).id
+    end
+
+    test "defaults work (no args)" do
+      insert_list(3, :move)
+      result = PokemonContext.list_moves()
+      assert length(result) >= 3
+    end
+  end
+
   describe "complex queries" do
     test "get_legendary_pokemons/0" do
       # Create legendary species and pokemon

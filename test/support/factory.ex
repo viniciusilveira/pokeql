@@ -137,6 +137,14 @@ defmodule Pokeql.Factory do
     }
   end
 
+  def version_group_factory do
+    %Pokeql.Pokemon.VersionGroup{
+      name: sequence("version_group_name", &"version-group-#{&1}"),
+      generation_name: "generation-i",
+      sort_order: sequence("version_group_sort_order", & &1 + 1)
+    }
+  end
+
   def sprite_factory do
     %Pokeql.Pokemon.Sprite{
       pokemon: build(:pokemon),

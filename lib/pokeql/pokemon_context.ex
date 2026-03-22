@@ -170,12 +170,17 @@ defmodule Pokeql.PokemonContext do
   end
 
   @doc """
-  Lists all abilities.
+  Lists abilities with optional pagination.
   """
-  @spec list_abilities() :: [Ability.t()]
-  def list_abilities do
+  @spec list_abilities(keyword()) :: [Ability.t()]
+  def list_abilities(opts \\ []) do
+    limit = Keyword.get(opts, :limit, 100)
+    offset = Keyword.get(opts, :offset, 0)
+
     Ability
     |> order_by([a], asc: a.name)
+    |> limit(^limit)
+    |> offset(^offset)
     |> Repo.all()
   end
 
@@ -210,6 +215,46 @@ defmodule Pokeql.PokemonContext do
   end
 
   @doc """
+  Gets a stat by name.
+  """
+  @spec get_stat_by_name(String.t()) :: Stat.t() | nil
+  def get_stat_by_name(name) do
+    Stat
+    |> where([s], s.name == ^name)
+    |> Repo.one()
+  end
+
+  @doc """
+  Gets a species by name.
+  """
+  @spec get_species_by_name(String.t()) :: Species.t() | nil
+  def get_species_by_name(name) do
+    Species
+    |> where([s], s.name == ^name)
+    |> Repo.one()
+  end
+
+  @doc """
+  Lists all version groups ordered by sort_order.
+  """
+  @spec list_version_groups() :: [VersionGroup.t()]
+  def list_version_groups do
+    VersionGroup
+    |> order_by([vg], asc: vg.sort_order)
+    |> Repo.all()
+  end
+
+  @doc """
+  Gets a version group by name.
+  """
+  @spec get_version_group_by_name(String.t()) :: VersionGroup.t() | nil
+  def get_version_group_by_name(name) do
+    VersionGroup
+    |> where([vg], vg.name == ^name)
+    |> Repo.one()
+  end
+
+  @doc """
   Gets a move by name.
   """
   @spec get_move_by_name(String.t()) :: Move.t() | nil
@@ -220,12 +265,17 @@ defmodule Pokeql.PokemonContext do
   end
 
   @doc """
-  Lists all moves.
+  Lists moves with optional pagination.
   """
-  @spec list_moves() :: [Move.t()]
-  def list_moves do
+  @spec list_moves(keyword()) :: [Move.t()]
+  def list_moves(opts \\ []) do
+    limit = Keyword.get(opts, :limit, 50)
+    offset = Keyword.get(opts, :offset, 0)
+
     Move
     |> order_by([m], asc: m.name)
+    |> limit(^limit)
+    |> offset(^offset)
     |> Repo.all()
   end
 
