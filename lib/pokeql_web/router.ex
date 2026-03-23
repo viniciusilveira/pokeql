@@ -10,6 +10,10 @@ defmodule PokeqlWeb.Router do
     forward "/graphql", Absinthe.Plug, schema: PokeqlWeb.Schema
   end
 
+  scope "/" do
+    get "/docs", PokeqlWeb.DocsController, :index
+  end
+
   if Mix.env() == :dev do
     forward "/graphiql", Absinthe.Plug.GraphiQL,
       schema: PokeqlWeb.Schema,
