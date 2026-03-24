@@ -1,0 +1,33 @@
+spectaql:
+  # Single self-contained HTML file with CSS and JS embedded
+  oneFile: true
+  embeddedCss: true
+  embeddedJs: true
+  # Output directory (relative to project root, where mix docs is run)
+  # Served by Phoenix at localhost:4000/docs
+  targetDir: priv/static/docs
+  fileName: index.html
+
+info:
+  title: Pokeql GraphQL API
+  description: |
+    A GraphQL API for Generation 1 Pokémon data.
+
+    Data is sourced from [PokeAPI](https://pokeapi.co), persisted to PostgreSQL,
+    and served from an in-memory ETS cache.
+
+    **Endpoint:** `http://localhost:4000/api/graphql`
+
+    **Interactive explorer:** `http://localhost:4000/graphiql` (development only)
+
+    All queries are read-only. No authentication required for local use.
+  version: "0.1.0"
+
+servers:
+  - url: http://localhost:4000
+    description: Local development server
+
+introspection:
+  # Points at the exported SDL file — no live server needed to generate docs.
+  # Regenerate the SDL with: mix absinthe.schema.sdl --schema PokeqlWeb.Schema --output priv/graphql/schema.graphql
+  schemaFile: priv/graphql/schema.graphql

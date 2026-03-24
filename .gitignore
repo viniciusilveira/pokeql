@@ -22,7 +22,13 @@ erl_crash.dump
 # Ignore package tarball (built via "mix hex.build").
 pokeql-*.tar
 
-# Since we are building assets from assets/,
-# we ignore priv/static. You may want to comment
-# this depending on your deployment strategy.
-/priv/static/
+# Ignore compiled frontend assets but not the generated GraphQL docs.
+/priv/static/css/
+/priv/static/fonts/
+/priv/static/images/
+/priv/static/js/
+
+# SpectaQL-generated SDL and docs are committed intentionally (useful to diff schema changes).
+# To exclude them instead, uncomment:
+# /priv/graphql/
+# /priv/static/docs/

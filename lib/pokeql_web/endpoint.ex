@@ -16,6 +16,12 @@ defmodule PokeqlWeb.Endpoint do
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
 
+  # Serve the generated SpectaQL documentation at /docs
+  plug Plug.Static,
+    at: "/docs",
+    from: {:pokeql, "priv/static/docs"},
+    gzip: false
+
   # Serve at "/" the static files from "priv/static" directory.
   #
   # You should set gzip to true if you are running phx.digest

@@ -1,0 +1,362 @@
+schema {
+  query: RootQueryType
+}
+
+type RootQueryType {
+  "Get a single Pokemon by id or name"
+  pokemon(
+    "National Pokedex ID."
+    id: ID
+
+    "Pokemon name (exact match). Provide either id or name."
+    name: String
+  ): Pokemon
+
+  "List Pokemon with optional filters"
+  pokemons(
+    "Maximum number of results to return. Default: 50."
+    limit: Int
+
+    "Number of results to skip for pagination. Default: 0."
+    offset: Int
+
+    "Filter by elemental type name, e.g. `fire`."
+    type: String
+
+    "Filter by ability name, e.g. `levitate`."
+    ability: String
+
+    "Filter by generation name, e.g. `generation-i`."
+    generation: String
+
+    "Partial name search."
+    search: String
+  ): [Pokemon!]!
+
+  "List legendary Pokemon"
+  legendaryPokemons: [Pokemon!]!
+
+  "List mythical Pokemon"
+  mythicalPokemons: [Pokemon!]!
+
+  "Get a single ability by name"
+  ability(
+    "Exact ability name to look up, e.g. `overgrow`."
+    name: String!
+  ): Ability
+
+  "List abilities"
+  abilities(
+    "Maximum number of results to return. Default: 100."
+    limit: Int
+
+    "Number of results to skip for pagination. Default: 0."
+    offset: Int
+  ): [Ability!]!
+
+  "Get a single type by name"
+  type(
+    "Exact type name to look up, e.g. `fire`."
+    name: String!
+  ): PokemonType
+
+  "List all types"
+  types: [PokemonType!]!
+
+  "Get a single stat by name"
+  stat(
+    "Exact stat name to look up, e.g. `attack`."
+    name: String!
+  ): Stat
+
+  "List all stats"
+  stats: [Stat!]!
+
+  "Get a single move by name"
+  move(
+    "Exact move name to look up, e.g. `flamethrower`."
+    name: String!
+  ): Move
+
+  "List moves"
+  moves(
+    "Maximum number of results to return. Default: 50."
+    limit: Int
+
+    "Number of results to skip for pagination. Default: 0."
+    offset: Int
+  ): [Move!]!
+
+  "Get a single species by name"
+  species(
+    "Exact species name to look up, e.g. `bulbasaur`."
+    name: String!
+  ): Species
+
+  "List all species"
+  speciesList: [Species!]!
+
+  "Get a single version group by name"
+  versionGroup(
+    "Exact version group name to look up, e.g. `red-blue`."
+    name: String!
+  ): VersionGroup
+
+  "List all version groups"
+  versionGroups: [VersionGroup!]!
+}
+
+"Taxonomic and biological classification data for a Pokemon species."
+type Species {
+  "Unique species identifier."
+  id: ID
+
+  "Species name, e.g. `bulbasaur`."
+  name: String
+
+  "Generation in which this species was introduced, e.g. `generation-i`."
+  generationName: String
+
+  "Predominant body colour, e.g. `green`."
+  colorName: String
+
+  "Body shape category, e.g. `quadruped`."
+  shapeName: String
+
+  "Natural habitat, e.g. `grassland`."
+  habitatName: String
+
+  "How quickly this species gains experience levels, e.g. `medium-slow`."
+  growthRateName: String
+
+  "Chance of being female in eighths (-1 means genderless)."
+  genderRate: Int
+
+  "Likelihood of capture (0–255; higher is easier)."
+  captureRate: Int
+
+  "Starting happiness value when obtained."
+  baseHappiness: Int
+
+  "Whether this is a baby Pokemon."
+  isBaby: Boolean
+
+  "Initial number of steps needed to hatch the egg."
+  hatchCounter: Int
+
+  "Whether males and females have visible sprite differences."
+  hasGenderDifferences: Boolean
+
+  "Whether this species is legendary."
+  isLegendary: Boolean
+
+  "Whether this species is mythical."
+  isMythical: Boolean
+}
+
+"A passive power that a Pokemon can have."
+type Ability {
+  "Unique ability identifier."
+  id: ID
+
+  "Ability name, e.g. `overgrow`."
+  name: String
+
+  "Generation in which this ability was introduced."
+  generationName: String
+
+  "Whether this ability appears in the main series games."
+  isMainSeries: Boolean
+
+  "Brief description of what the ability does."
+  shortEffect: String
+}
+
+"An elemental type that affects battle damage calculation."
+type PokemonType {
+  "Unique type identifier."
+  id: ID
+
+  "Type name, e.g. `fire`."
+  name: String
+
+  "Generation in which this type was introduced."
+  generationName: String
+
+  "Damage class (physical, special, or status)."
+  damageClassName: String
+}
+
+"A numerical attribute that governs a Pokemon's capabilities in battle."
+type Stat {
+  "Unique stat identifier."
+  id: ID
+
+  "Stat name, e.g. `attack`."
+  name: String
+
+  "Numeric index used internally by the games."
+  gameIndex: Int
+
+  "Whether this stat only applies during battle."
+  isBattleOnly: Boolean
+}
+
+"A Pokemon's base value and effort yield for a specific stat."
+type PokemonStat {
+  "Base stat value for this Pokemon."
+  baseStat: Int
+
+  "Effort value (EV) this Pokemon yields when defeated."
+  effort: Int
+
+  "The stat this entry describes."
+  stat: Stat
+}
+
+"A battle move that a Pokemon can learn and use."
+type Move {
+  "Unique move identifier."
+  id: ID
+
+  "Move name, e.g. `tackle`."
+  name: String
+
+  "Generation in which this move was introduced."
+  generationName: String
+
+  "Base power of the move (null for non-damaging moves)."
+  power: Int
+
+  "Power points — maximum number of times the move can be used."
+  pp: Int
+
+  "Percentage chance the move will hit (null for moves that bypass accuracy checks)."
+  accuracy: Int
+
+  "Determines order within a turn (higher acts first)."
+  priority: Int
+
+  "Elemental type of the move, e.g. `normal`."
+  typeName: String
+
+  "Whether the move is physical, special, or a status move."
+  damageClassName: String
+
+  "Brief description of what the move does."
+  shortEffect: String
+}
+
+"A paired set of game versions released together, e.g. Red\/Blue."
+type VersionGroup {
+  "Unique version group identifier."
+  id: ID
+
+  "Version group name, e.g. `red-blue`."
+  name: String
+
+  "Generation this version group belongs to."
+  generationName: String
+
+  "Chronological ordering index."
+  sortOrder: Int
+}
+
+"Details about how and when a Pokemon learns a specific move in a given version group."
+type PokemonMoveDetail {
+  "Level at which the move is learned (0 for non level-up methods)."
+  levelLearnedAt: Int
+
+  "How the move is learned, e.g. `level-up`, `machine`, `egg`."
+  learnMethod: String
+
+  "The move being learned."
+  move: Move
+
+  "The game version group this learning detail applies to."
+  versionGroup: VersionGroup
+}
+
+"Image URLs for a Pokemon's official game sprites."
+type Sprite {
+  "Unique sprite record identifier."
+  id: ID
+
+  "Default front-facing sprite URL."
+  frontDefault: String
+
+  "Shiny front-facing sprite URL."
+  frontShiny: String
+
+  "Default back-facing sprite URL."
+  backDefault: String
+
+  "Shiny back-facing sprite URL."
+  backShiny: String
+
+  "Female front-facing sprite URL (null if no gender difference)."
+  frontFemale: String
+
+  "Female back-facing sprite URL (null if no gender difference)."
+  backFemale: String
+
+  "Shiny female front-facing sprite URL."
+  frontShinyFemale: String
+
+  "Shiny female back-facing sprite URL."
+  backShinyFemale: String
+}
+
+"A Pokemon — a catchable creature with stats, types, abilities, and learnable moves."
+type Pokemon {
+  "National Pokedex number."
+  id: ID
+
+  "Pokemon name, e.g. `pikachu`."
+  name: String
+
+  "Height in decimetres."
+  height: Int
+
+  "Weight in hectograms."
+  weight: Int
+
+  "Sort order for display purposes (species-level ordering)."
+  order: Int
+
+  "Whether this is the default form of the species."
+  isDefault: Boolean
+
+  "Base experience points gained by the opponent when this Pokemon is defeated."
+  baseExperience: Int
+
+  "Sum of all base stats — a quick power indicator."
+  totalBaseStats: Int
+
+  "List of elemental type names this Pokemon has, e.g. `[\"grass\", \"poison\"]`."
+  typeNames: [String]
+
+  "List of ability names this Pokemon can have."
+  abilityNames: [String]
+
+  "Species classification and biological metadata."
+  species: Species
+
+  "Elemental types with full type details."
+  types: [PokemonType]
+
+  "Full ability objects including descriptions."
+  abilities: [Ability]
+
+  "Base stats and EV yields for each stat."
+  stats: [PokemonStat]
+
+  "Sprite image URLs for this Pokemon."
+  sprites: Sprite
+
+  "Moves this Pokemon can learn. Filter by `versionGroup` to get learn method and level details."
+  moves(
+    "Filter moves to a specific version group, e.g. `red-blue`. Omit to return all learnable moves without version detail."
+    versionGroup: String
+  ): [PokemonMoveDetail]
+}

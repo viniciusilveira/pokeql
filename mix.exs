@@ -77,7 +77,12 @@ defmodule Pokeql.MixProject do
       setup: ["deps.get", "ecto.setup"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"]
+      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
+      docs: [
+        "cmd mkdir -p priv/graphql priv/static/docs",
+        "absinthe.schema.sdl --schema PokeqlWeb.Schema --output priv/graphql/schema.graphql",
+        "cmd npx --yes spectaql docs/spectaql.yml"
+      ]
     ]
   end
 end
